@@ -15,6 +15,7 @@ export interface AppointmentFilter {
   start?: string;
   timezone?: string;
   user?: number;
+  users?: number | number[];
 }
 
 export interface UtmParameters {
@@ -46,6 +47,7 @@ export interface AppointmentParameters {
       start: string | undefined;
       supported_locale: string | null;
       timezone?: string;
+      additional_staff_id?: number | number[],
     };
     relationships: {
       attendees: {
@@ -114,11 +116,13 @@ export interface AppointmentResource extends Resource, ConditionalResource {
 
   at(location: number): this;
 
+  attendedBy(users: number | number[]): this;
+
   book(): Promise<any>;
 
   by(user: number): this;
 
-  cancel(appointment: number, attendee: number): Promise<any>;
+  cancel(appointment: number, attendee: number, code: string): Promise<any>;
 
   for(services: number | number[]): this;
 
@@ -200,6 +204,12 @@ export default class Appointment extends Conditional implements AppointmentResou
     return this;
   }
 
+  public attendedBy(users: number | number[]): this {
+    this.filters.users = users;
+
+    return this;
+  }
+
   public async book(): Promise<any> {
     return await this.client.post('appointments', this.params());
   }
@@ -216,8 +226,11 @@ export default class Appointment extends Conditional implements AppointmentResou
     return this;
   }
 
-  public async cancel(appointment: number, attendee: number): Promise<any> {
-    return await this.client.delete(`appointments/${appointment}/${attendee}`, { data: this.params() });
+  public async cancel(appointment: number, attendee: number, code: string): Promise<any> {
+    return await this.client.delete(`appointments/${appointment}/${attendee}`, {
+      data: this.params(),
+      params: { code },
+    });
   }
 
   public content(content: string): this {
@@ -365,6 +378,10 @@ export default class Appointment extends Conditional implements AppointmentResou
 
       if (this.filters.user) {
         params.data.attributes.staff_id = this.filters.user;
+      }
+
+      if (this.filters.users) {
+        params.data.attributes.additional_staff_id = this.filters.users;
       }
 
       if (this.filters.invitation) {

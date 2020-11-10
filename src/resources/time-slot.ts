@@ -13,10 +13,12 @@ export interface TimeSlotFilter {
   timezone?: string;
   locales?: string[];
   user?: number;
+  users?: number | number[];
   visibility?: number;
 }
 
 export interface TimeSlotParameters {
+  additional_staff_id?: number | number[];
   end?: string;
   exclusion?: number;
   location_id?: number;
@@ -31,6 +33,8 @@ export interface TimeSlotParameters {
 
 export interface TimeSlotResource extends Resource, ConditionalResource {
   at(location: number): this;
+
+  attendedBy(users: number | number[]): this;
 
   between(start: string, end: string): this;
 
@@ -62,6 +66,12 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
 
   public at(location: number): this {
     this.filters.location = location;
+
+    return this;
+  }
+
+  public attendedBy(users: number | number[]): this {
+    this.filters.users = users;
 
     return this;
   }
@@ -117,6 +127,10 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
 
     if (this.filters.user) {
       params.staff_id = this.filters.user;
+    }
+
+    if (this.filters.users) {
+      params.additional_staff_id = this.filters.users;
     }
 
     if (this.filters.visibility) {

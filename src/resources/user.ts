@@ -4,7 +4,15 @@ import { combine } from '../helpers/filters';
 import { Filterable, Pageable } from '../index';
 import Conditional, { ConditionalResource } from './conditional';
 
+type LocatableUserDetail = 'region';
+
+export interface LocatableUserParameters {
+  [key: string]: any;
+  region?: string;
+}
+
 export interface UserFilter {
+  [key: string]: any;
   assigned?: boolean;
   services?: number | number[] | string | string[];
   location?: number | string;
@@ -18,6 +26,7 @@ export interface UserParameters {
   client_view_meeting_method?: number;
   service?: number | number[] | string | string[];
   location?: number | string;
+  province?: string;
   resource?: string;
   user?: number | string;
   meeting_method?: number;
@@ -29,6 +38,8 @@ export interface UserResource extends Pageable, ConditionalResource {
   at(location: number | string): this;
 
   find(user: number | string): this;
+
+  located(details: LocatableUserParameters): this;
 
   performing(services: number | number[] | string | string[]): this;
 
@@ -68,6 +79,16 @@ export default class User extends Conditional implements UserResource {
 
   public find(user: number | string): this {
     this.filters.user = user;
+
+    return this;
+  }
+
+  public located(details: LocatableUserParameters): this {
+    const keys = Object.keys(details) as LocatableUserDetail[];
+
+    keys.map(key => {
+      this.filters[key] = details[key];
+    });
 
     return this;
   }
@@ -144,6 +165,10 @@ export default class User extends Conditional implements UserResource {
 
     if (typeof this.filters.location !== 'undefined') {
       params.location = this.filters.location;
+    }
+
+    if (typeof this.filters.region !== 'undefined') {
+      params.province = this.filters.region;
     }
 
     if (typeof this.filters.method !== 'undefined') {

@@ -35,6 +35,13 @@ it('will set location filter using a string', async () => {
   });
 });
 
+it('will set the locatable filters as supplied', async () => {
+  const resource = new User(mockAxios);
+  const region = 'SK';
+
+  expect(resource.located({ region })).toHaveProperty('filters', { region })
+});
+
 it('will set meeting method filter using a number', async () => {
   const resource = new User(mockAxios);
 
@@ -124,6 +131,7 @@ it('can string all filterable options together', async () => {
     resource
       .assigned()
       .at(1)
+      .located({ region: 'SK' })
       .performing([1, 2])
       .supporting(MeetingMethods.PHONE_CALL)
       .through('client_view')
@@ -137,6 +145,7 @@ it('can string all filterable options together', async () => {
     assigned: true,
     location: 1,
     method: MeetingMethods.PHONE_CALL,
+    region: 'SK',
     resource: 'client_view',
     services: [1, 2],
     user: 1,
@@ -161,6 +170,7 @@ it('can get users with additional parameters', async () => {
   await resource
     .assigned()
     .at(1)
+    .located({ region: 'SK' })
     .performing([1, 2])
     .supporting(MeetingMethods.PHONE_CALL)
     .through('client_view')
@@ -177,6 +187,7 @@ it('can get users with additional parameters', async () => {
       'filter[client_view_meeting_method]': MeetingMethods.PHONE_CALL,
       'filter[location]': 1,
       'filter[meeting_method]': MeetingMethods.PHONE_CALL,
+      'filter[province]': 'SK',
       'filter[resource]': 'client_view',
       'filter[service]': [1, 2],
       'filter[user]': 1,

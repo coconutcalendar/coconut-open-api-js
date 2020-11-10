@@ -64,6 +64,10 @@ Add the currently supplied attendees to the given appointment. _(not publicly av
 
 Set a relationship which will tell the API to use the given location identifier when creating an appointment.
 
+- `attendedBy(users: number | number[])`
+
+Set a relationship which will tell the API to use the given additional user identifier when creating an appointment.
+
 - `book()`
 
 Create a new appointment using the pre-set parameters.
@@ -72,9 +76,9 @@ Create a new appointment using the pre-set parameters.
 
 Set a relationship which will tell the API to use the given user identifier when creating an appointment.
 
-- `cancel(appointment: number, attendee: number)`
+- `cancel(appointment: number, attendee: number, code: string)`
 
-Cancel an appointment for a specific attendee matching the given appointment and attendee identifiers.
+Cancel an appointment for a specific attendee matching the given appointment, attendee and confirmation code identifiers.
 
 - `campaign(campaign: string)`
 
@@ -184,7 +188,7 @@ class Appointments {
   async book(attributes) {
     const {
       address, campaign, city, content, country, email, firstName, invitation, language, lastName,
-      location, locale, medium, notes, phone, question, service, source, start, term, timezone, user, value,
+      location, locale, medium, notes, phone, question, service, source, start, term, timezone, user, users, value,
     } = attributes;
 
     const answer = (new Answer())
@@ -202,6 +206,7 @@ class Appointments {
     return this.api
       .appointments()
       .at(location)
+      .attendedBy(users)
       .by(user)
       .for(service)
       .starting(start)
@@ -219,7 +224,7 @@ class Appointments {
   }
 
   async cancel(attributes) {
-    const { appointment, attendee } = attributes;
+    const { appointment, attendee, code } = attributes;
 
     // We can optionally submit custom form responses when cancelling
     // appointments by utilizing the Response and Attendee models.
@@ -232,7 +237,7 @@ class Appointments {
 
     return this.api.appointments()
       .with(person)
-      .cancel(appointment, attendee);
+      .cancel(appointment, attendee, code);
   }
 
   async fetch({ code, id }) {
@@ -608,6 +613,10 @@ Set a filter which will tell the API to return only individual type services. _(
 
 Set a filter which will tell the API to return services that are specifically invite only.
 
+- `located(details: LocatableServiceParameters)`
+
+Set certain filters which will tell the API to return services that match the locatable details you provide.
+
 - `on(page: number)`
 
 Set the page offset which you want to view.
@@ -638,7 +647,7 @@ class Services {
     this.api = new OpenApi();
   }
 
-  async get({ category, limit, location, method, page, resource, sortable, user }) {
+  async get({ category, limit, location, method, page, region, resource, sortable, user }) {
     return await this.api
       .services()
       .assigned()
@@ -646,6 +655,7 @@ class Services {
       .by(user)
       .in(category)
       .invitable()
+      .located({ region })
       .supporting(method)
       .through(resource)
       .on(page)
@@ -687,6 +697,10 @@ class Settings {
 - `at(location: number)`
 
 Set a filter which will tell the API to return time slots at the location matching the provided identifier.
+
+- `attendedBy(users: number | number[])`
+
+Set a filter which will tell the API to return time slots that match availability of the additional user matching the provided identifier.
 
 - `between(start: string, end: string)`
 
@@ -730,10 +744,11 @@ class TimeSlots {
     this.api = new OpenApi();
   }
 
-  async get({ appointment, end, location, service, start, user }) {
+  async get({ appointment, end, location, service, start, user, users }) {
     return await this.api
       .slots()
       .at(location)
+      .attendedBy(users)
       .by(user)
       .for(service)
       .between(start, end)
@@ -765,6 +780,10 @@ Set a filter which will tell the API to return a user matching the provided iden
 - `get()`
 
 Send the API request using the pre-set filters.
+
+- `located(details: LocatableUserParameters)`
+
+Set certain filters which will tell the API to return users that match the locatable details you provide.
 
 - `on(page: number)`
 
@@ -800,11 +819,12 @@ class Users {
     this.api = new OpenApi();
   }
 
-  async get({ limit, location, method, page, resource, services, sortable }) {
+  async get({ limit, location, method, page, region, resource, services, sortable }) {
     return await this.api
       .users()
       .assigned()
       .at(location)
+      .located({ region })
       .performing(services)
       .supporting(method)
       .through(resource)

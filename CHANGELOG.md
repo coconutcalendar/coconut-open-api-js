@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [0.11.0] - 2020-10-20
+
+- Updates documentation for cancel method to show the newly required code parameter [`2b9b2bdbc7`](https://github.com/coconutcalendar/coconut-open-api-js/commit/2b9b2bdbc7)
+- Adds required code parameter to cancel an appointment [`b556d27302`](https://github.com/coconutcalendar/coconut-open-api-js/commit/b556d27302)
+- Updates tests to ensure a confirmation code is passed when cancelling an attendee's appointment [`007069416e`](https://github.com/coconutcalendar/coconut-open-api-js/commit/007069416e)
+
+## [0.10.4] - 2020-10-20
+
+- Adds additional users filter to time slots [`cd58720646`](https://github.com/coconutcalendar/coconut-open-api-js/commit/cd58720646)
+- Adds additional users attribute when booking appointment [`b72216f6ad`](https://github.com/coconutcalendar/coconut-open-api-js/commit/b72216f6ad)
+
+## [0.10.3] - 2020-09-29
+
+- Adds region filter to service and user resources [`b2e3fe51b0`](https://github.com/coconutcalendar/coconut-open-api-js/commit/b2e3fe51b0)
+
 ## [0.10.2] - 2020-08-11
 
 - Ensures an attendee alias is sent in the correct format when it is supplied [`9d8cc94faa`](https://github.com/coconutcalendar/coconut-open-api-js/commit/9d8cc94faa)
@@ -365,7 +380,11 @@
 - Removes mocked call chain [`3c253abd0a`](https://github.com/coconutcalendar/coconut-open-api-js/commit/3c253abd0a)
 - Removes ill-thought out version option [`d159644516`](https://github.com/coconutcalendar/coconut-open-api-js/commit/d159644516)
 
-[Unreleased]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.10.1...HEAD
+[Unreleased]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.10.4...v0.11.0
+[0.10.4]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.10.3...v0.10.4
+[0.10.3]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.10.2...v0.10.3
+[0.10.2]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.10.1...v0.10.2
 [0.10.1]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.9.3...v0.10.0
 [0.9.3]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.9.2...v0.9.3
