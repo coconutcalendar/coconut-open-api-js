@@ -619,6 +619,10 @@ Set a filter which will tell the API to return services that are supported by th
 
 Set the limit which you want returned.
 
+- `through(resource: string)`
+
+Set a filter which will tell the API which resource the request comes from. Currently, only 'client_view' is supported.
+
 ##### Example
 
 ```javascript
@@ -629,7 +633,7 @@ class Services {
     this.api = new OpenApi();
   }
 
-  async get({ category, limit, location, method, page, sortable, user }) {
+  async get({ category, limit, location, method, page, resource, sortable, user }) {
     return await this.api
       .services()
       .assigned()
@@ -638,6 +642,7 @@ class Services {
       .in(category)
       .invitable()
       .supporting(method)
+      .through(resource)
       .on(page)
       .sortBy(sortable)
       .take(limit)
