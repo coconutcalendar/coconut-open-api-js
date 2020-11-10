@@ -786,6 +786,10 @@ Set a filter which will tell the API to return users that support the given meet
 
 Set the limit which you want returned.
 
+- `through(resource: string)`
+
+Set a filter which will tell the API which resource the request comes from. Currently, only 'client_view' is supported.
+
 ##### Example
 
 ```javascript
@@ -796,13 +800,14 @@ class Users {
     this.api = new OpenApi();
   }
 
-  async get({ limit, location, method, page, services, sortable }) {
+  async get({ limit, location, method, page, resource, services, sortable }) {
     return await this.api
       .users()
       .assigned()
       .at(location)
       .performing(services)
       .supporting(method)
+      .through(resource)
       .on(page)
       .sortBy(sortable)
       .take(limit)
