@@ -21,6 +21,7 @@ export interface LocationFilter {
   preferred?: number;
   method?: number;
   services?: number | number[] | string | string[];
+  resource?: string;
   user?: number | string;
   virtual?: number;
 }
@@ -34,6 +35,7 @@ export interface LocationParameters {
   preferred?: number;
   province?: string;
   service?: number | number[] | string | string[];
+  resource?: string;
   user?: number | string;
   virtual?: number;
 }
@@ -58,6 +60,8 @@ export interface LocationResource extends Pageable, ConditionalResource {
   suggest(query: string): Promise<any>;
 
   supporting(method: number): this;
+
+  through(resource: string): this;
 
   virtual(): this;
 }
@@ -192,6 +196,12 @@ export default class Location extends Conditional implements LocationResource {
     return this;
   }
 
+  public through(resource: string): this {
+    this.filters.resource = resource;
+
+    return this;
+  }
+
   public virtual(): this {
     this.filters.virtual = 1;
 
@@ -227,6 +237,10 @@ export default class Location extends Conditional implements LocationResource {
 
     if (typeof this.filters.region !== 'undefined') {
       params.province = this.filters.region;
+    }
+
+    if (typeof this.filters.resource !== 'undefined') {
+      params.resource = this.filters.resource;
     }
 
     if (typeof this.filters.services !== 'undefined') {

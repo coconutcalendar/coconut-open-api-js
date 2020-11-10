@@ -422,6 +422,10 @@ Set a filter which will tell the API to return locations that are supported by t
 
 Set the limit which you want returned.
 
+- `through(resource: string)`
+
+Set a filter which will tell the API which resource the request comes from. Currently, only 'client_view' is supported.
+
 - `virtual()`
 
 Set a filter which will tell the API to return only virtual locations. _(not publicly available yet)_
@@ -440,7 +444,7 @@ class Locations {
     return await this.api.details(identifier);
   }
 
-  async get({ page, limit, method, services, sortable, user }) {
+  async get({ page, limit, method, resource, services, sortable, user }) {
     return await this.api
       .locations()
       .assigned()
@@ -450,6 +454,7 @@ class Locations {
       .physical()
       .supporting(method)
       .sortBy(sortable)
+      .through(resource)
       .on(page)
       .take(limit)
       .get();

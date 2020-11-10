@@ -90,6 +90,14 @@ it('will set meeting method filter using a number', async () => {
   });
 });
 
+it('will set resource filter', async () => {
+  const resource = new Location(mockAxios);
+
+  expect(resource.through('client_view')).toHaveProperty('filters', {
+    resource: 'client_view',
+  });
+});
+
 it('will set the physical locations only filter', async () => {
   const resource = new Location(mockAxios);
 
@@ -152,6 +160,7 @@ it('can string all filterable options together', async () => {
       .physical()
       .preferred()
       .supporting(MeetingMethods.PHONE_CALL)
+      .through('client_view')
       .located({ city: 'Fake City', country: 'FC', region: 'FR' })
       .take(5)
       .on(1),
@@ -165,6 +174,7 @@ it('can string all filterable options together', async () => {
     method: MeetingMethods.PHONE_CALL,
     preferred: 1,
     region: 'FR',
+    resource: 'client_view',
     services: [1, 2],
     user: 1,
     virtual: 0,
@@ -194,6 +204,7 @@ it('can get locations with additional parameters', async () => {
     .physical()
     .preferred()
     .supporting(MeetingMethods.PHONE_CALL)
+    .through('client_view')
     .located({ city: 'Fake City', country: 'FC', region: 'FR' })
     .sortBy('created')
     .take(5)
@@ -211,6 +222,7 @@ it('can get locations with additional parameters', async () => {
       'filter[preferred]': 1,
       'filter[province]': 'FR',
       'filter[service]': [1, 2],
+      'filter[resource]': 'client_view',
       'filter[user]': 1,
       'filter[virtual]': 0,
       limit: 5,
