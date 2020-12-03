@@ -37,6 +37,21 @@ export interface AppointmentNotificationParameters {
   user?: boolean;
 }
 
+export interface AppointmentMeta {
+  booker?: number;
+  notify?: {
+    client?: boolean;
+    user?: boolean;
+  };
+  utm?: {
+    campaign?: string;
+    content?: string;
+    source?: string;
+    medium?: string;
+    term?: string;
+  };
+}
+
 export interface AppointmentParameters {
   data: {
     attributes?: {
@@ -58,20 +73,7 @@ export interface AppointmentParameters {
     };
     type: string;
   };
-  meta?: {
-    booker?: number;
-    notify?: {
-      client?: boolean;
-      user?: boolean;
-    };
-    utm?: {
-      campaign?: string;
-      content?: string;
-      source?: string;
-      medium?: string;
-      term?: string;
-    };
-  };
+  meta?: AppointmentMeta;
 }
 
 export interface RescheduleParameters {
@@ -164,10 +166,6 @@ export interface Utm {
 
 export interface AppointmentRelationship {
   attendees: AttendeeModel[] | [];
-}
-
-export interface AppointmentMeta {
-  booker?: number;
 }
 
 export default class Appointment extends Conditional implements AppointmentResource, Utm {
