@@ -43,13 +43,7 @@ export interface AppointmentMeta {
     client?: boolean;
     user?: boolean;
   };
-  utm?: {
-    campaign?: string;
-    content?: string;
-    source?: string;
-    medium?: string;
-    term?: string;
-  };
+  utm?: UtmParameters;
 }
 
 export interface AppointmentParameters {
