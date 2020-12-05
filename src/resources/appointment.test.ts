@@ -186,6 +186,14 @@ it('can set an identifier for who we are acting as when booking the appointment'
   });
 });
 
+it('can set arbitrary metadata', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.metadata({ test: 'data' })).toHaveProperty('meta', {
+    test: 'data',
+  });
+});
+
 it('can book an appointment with the minimum required parameters', async () => {
   const resource = new Appointment(mockAxios);
   const start = '2018-01-01 12:00:00';
@@ -244,6 +252,7 @@ it('can book an appointment with all available parameters', async () => {
       .by(4)
       .via(5)
       .starting(start)
+      .metadata({ test: 'data' })
       .method(PHONE_CALL)
       .in('America/Toronto')
       .supporting('fr')
@@ -339,6 +348,7 @@ it('can book an appointment with all available parameters', async () => {
       meta: {
         booker: 10,
         notify: notification,
+        test: 'data',
         utm: {
           campaign: 'test campaign',
           content: 'test content',
@@ -613,6 +623,7 @@ it('can reschedule an appointment with all available parameters', async () => {
     await resource
       .starting(start)
       .in('America/Toronto')
+      .metadata({ test: 'data' })
       .notify(notification)
       .reschedule(1, 'code');
 
@@ -627,6 +638,7 @@ it('can reschedule an appointment with all available parameters', async () => {
       },
       meta: {
         notify: notification,
+        test: 'data',
       },
     });
   }

@@ -37,15 +37,6 @@ export interface AppointmentNotificationParameters {
   user?: boolean;
 }
 
-export interface AppointmentMeta {
-  booker?: number;
-  notify?: {
-    client?: boolean;
-    user?: boolean;
-  };
-  utm?: UtmParameters;
-}
-
 export interface AppointmentParameters {
   data: {
     attributes?: {
@@ -68,6 +59,16 @@ export interface AppointmentParameters {
     type: string;
   };
   meta?: AppointmentMeta;
+}
+
+export interface AppointmentMeta {
+  booker?: number;
+  notify?: {
+    client?: boolean;
+    user?: boolean;
+  };
+  utm?: UtmParameters;
+  [key: string]: unknown;
 }
 
 export interface RescheduleParameters {
@@ -128,6 +129,8 @@ export interface AppointmentResource extends Resource, ConditionalResource {
   in(timezone: string): this;
 
   matching(matchers: AppointmentMatcherParameters): this;
+
+  metadata(data: AppointmentMeta): this;
 
   method(method: number): this;
 
@@ -262,6 +265,15 @@ export default class Appointment extends Conditional implements AppointmentResou
 
   public medium(medium: string): this {
     this.utm.medium = medium;
+
+    return this;
+  }
+
+  public metadata(data: AppointmentMeta): this {
+    this.meta = {
+      ...this.meta,
+      ...data,
+    }
 
     return this;
   }
@@ -436,12 +448,12 @@ export default class Appointment extends Conditional implements AppointmentResou
       };
     }
 
-    if (this.meta.booker) {
+    if (Object.keys(this.meta).length !== 0) {
       params = {
         ...params,
         meta: {
           ...params.meta,
-          booker: this.meta.booker,
+          ...this.meta,
         }
       }
     }
@@ -471,6 +483,16 @@ export default class Appointment extends Conditional implements AppointmentResou
           notify: this.filters.notifications,
         },
       };
+    }
+
+    if (Object.keys(this.meta).length !== 0) {
+      params = {
+        ...params,
+        meta: {
+          ...params.meta,
+          ...this.meta,
+        }
+      }
     }
 
     return params;
