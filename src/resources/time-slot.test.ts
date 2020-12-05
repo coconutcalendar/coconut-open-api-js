@@ -107,6 +107,14 @@ it('will set a visibility filter', async () => {
   });
 });
 
+it('can set arbitrary metadata', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.metadata({ test: 'data' })).toHaveProperty('meta', {
+    test: 'data',
+  });
+});
+
 it('can string all filterable options together', async () => {
   const resource = new TimeSlot(mockAxios);
 
@@ -151,6 +159,7 @@ it('can get time slots for no particular user', async () => {
     .in(timezone)
     .excluding(1)
     .visibility(Visibilities.ALL)
+    .metadata({ test: 'data' })
     .get();
 
   expect(mockAxios.get).toHaveBeenCalledTimes(1);
@@ -159,6 +168,7 @@ it('can get time slots for no particular user', async () => {
       end: '2018-01-31',
       exclusion: 1,
       location_id: 1,
+      meta: { test: 'data' },
       service_id: [1, 2],
       start: '2018-01-01',
       supported_locales: ['fr', 'es'],
@@ -182,12 +192,14 @@ it('can get time slots for a specified user', async () => {
     .by(1)
     .in(timezone)
     .visibility(Visibilities.ALL)
+    .metadata({ test: 'data' })
     .get();
 
   expect(mockAxios.get).toHaveBeenCalledTimes(1);
   expect(mockAxios.get).toHaveBeenCalledWith('times', {
     params: {
       end: '2018-01-31',
+      meta: { test: 'data' },
       location_id: 1,
       service_id: [1, 2],
       staff_id: 1,

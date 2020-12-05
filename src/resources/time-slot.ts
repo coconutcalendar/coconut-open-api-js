@@ -23,12 +23,17 @@ export interface TimeSlotParameters {
   exclusion?: number;
   location_id?: number;
   meeting_method?: number;
+  meta?: TimeSlotMeta;
   service_id?: number | number[];
   staff_id?: number;
   start?: string;
   supported_locales?: string[];
   timezone?: string;
   visibility?: number;
+}
+
+export interface TimeSlotMeta {
+  [key: string]: unknown;
 }
 
 export interface TimeSlotResource extends Resource, ConditionalResource {
@@ -46,6 +51,8 @@ export interface TimeSlotResource extends Resource, ConditionalResource {
 
   in(timezone: string): this;
 
+  metadata(data: TimeSlotMeta): this;
+
   method(method: number): this;
 
   supporting(locales: string[]): this;
@@ -56,12 +63,14 @@ export interface TimeSlotResource extends Resource, ConditionalResource {
 export default class TimeSlot extends Conditional implements TimeSlotResource {
   protected client: AxiosInstance;
   protected filters: TimeSlotFilter;
+  protected meta: TimeSlotMeta;
 
   constructor(client: AxiosInstance) {
     super();
 
     this.client = client;
     this.filters = {};
+    this.meta = {};
   }
 
   public at(location: number): this {
@@ -105,6 +114,7 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
     const params: TimeSlotParameters = {
       end: this.filters.end,
       location_id: this.filters.location,
+      meta: this.meta,
       service_id: this.filters.services,
       start: this.filters.start,
     };
@@ -142,6 +152,15 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
 
   public in(timezone: string): this {
     this.filters.timezone = timezone;
+
+    return this;
+  }
+
+  public metadata(data: TimeSlotMeta): this {
+    this.meta = {
+      ...this.meta,
+      ...data,
+    }
 
     return this;
   }
