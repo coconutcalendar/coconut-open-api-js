@@ -6,6 +6,7 @@ import Conditional, { ConditionalResource } from './conditional';
 export interface TimeSlotFilter {
   end?: string;
   exclusion?: number;
+  google?: string;
   location?: number;
   method?: number;
   services?: number | number[];
@@ -21,6 +22,7 @@ export interface TimeSlotParameters {
   additional_staff_id?: number | number[];
   end?: string;
   exclusion?: number;
+  google?: string;
   location_id?: number;
   meeting_method?: number;
   service_id?: number | number[];
@@ -43,6 +45,8 @@ export interface TimeSlotResource extends Resource, ConditionalResource {
   excluding(exclusion: number): this;
 
   for(services: number | number[]): this;
+
+  google(token: string): this;
 
   in(timezone: string): this;
 
@@ -137,7 +141,17 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
       params.visibility = this.filters.visibility;
     }
 
+    if (this.filters.google) {
+      params.google = this.filters.google;
+    }
+
     return await this.client.get('times', { params });
+  }
+
+  public google(token: string): this {
+    this.filters.google = token;
+
+    return this;
   }
 
   public in(timezone: string): this {
