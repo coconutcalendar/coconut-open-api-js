@@ -1,14 +1,17 @@
 import { AxiosInstance } from 'axios';
 
-import { Filterable } from '../index';
 import Conditional from './conditional';
 
 export interface WaitTimeParameters {
+  location_id?: string | number;
+  limit?: number;
+  page?: number;
 }
 
 export interface WaitTimeResource {
     on(page: number): this;
     take(limit: number): this;
+    at(location_id: string | number): this;
 }
 
 export default class WaitTime extends Conditional implements WaitTimeResource {
@@ -27,7 +30,7 @@ export default class WaitTime extends Conditional implements WaitTimeResource {
   }
 
   public async get(): Promise<any> {
-    let params: Filterable<WaitTimeParameters> = {};
+    let params: WaitTimeParameters = {};
     let location_id: string | number = '';
 
     if (this.location_id != null) {
