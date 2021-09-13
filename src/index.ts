@@ -20,6 +20,7 @@ import TimeSlot, { TimeSlotResource } from './resources/time-slot';
 import Timezone, { TimezoneResource } from './resources/timezone';
 import User, { UserResource } from './resources/user';
 import WaitList, { WaitListResource } from './resources/wait-list';
+import WaitTime, { WaitTimeResource } from './resources/wait-time';
 
 export interface Filterable<T> {
   filter?: T;
@@ -65,6 +66,7 @@ export class OpenApi {
   protected slot: TimeSlotResource;
   protected timezone: TimezoneResource;
   protected user: UserResource;
+  protected waitTime: WaitTimeResource;
 
   constructor(domain?: string) {
     this.client = Client(domain);
@@ -79,6 +81,7 @@ export class OpenApi {
     this.slot = new TimeSlot(this.client);
     this.timezone = new Timezone(this.client);
     this.user = new User(this.client);
+    this.waitTime = new WaitTime(this.client);
   }
 
   public appointments(): AppointmentResource {
@@ -126,5 +129,9 @@ export class OpenApi {
 
   public users(): UserResource {
     return this.user;
+  }
+
+  public waitTimes(): WaitTimeResource {
+    return this.waitTime;
   }
 }
