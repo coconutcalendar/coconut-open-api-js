@@ -11,12 +11,12 @@ export interface WaitTimeParameters {
 export interface WaitTimeResource {
     on(page: number): this;
     take(limit: number): this;
-    at(location_id: string | number): this;
+    at(location: string | number): this;
 }
 
 export default class WaitTime extends Conditional implements WaitTimeResource {
   protected client: AxiosInstance;
-  protected location_id: string | number | null;
+  protected location: string | number | null;
   protected page: number | null;
   protected limit: number | null;
 
@@ -24,17 +24,17 @@ export default class WaitTime extends Conditional implements WaitTimeResource {
     super();
 
     this.client = client;
-    this.location_id = null;
+    this.location = null;
     this.page = null;
     this.limit = null;
   }
 
   public async get(): Promise<any> {
     let params: WaitTimeParameters = {};
-    let location_id: string | number = '';
+    let location: string | number = '';
 
-    if (this.location_id != null) {
-        location_id = this.location_id;
+    if (this.location != null) {
+        location = this.location;
     }
 
     if (this.limit) {
@@ -45,11 +45,11 @@ export default class WaitTime extends Conditional implements WaitTimeResource {
       params.page = this.page;
     }
 
-    return await this.client.get(`wait-time-average/${location_id}`.replace(/\/$/, ''), { params });
+    return await this.client.get(`wait-time-average/${location}`, { params });
   }
 
-  public at(location_id: string | number): this {
-    this.location_id = location_id;
+  public at(location: string | number): this {
+    this.location = location;
 
     return this;
   }
