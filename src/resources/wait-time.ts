@@ -3,7 +3,7 @@ import { AxiosInstance } from 'axios';
 import Conditional from './conditional';
 
 export interface WaitTimeParameters {
-  location_id?: string | number;
+  location?: string | number;
   limit?: number;
   page?: number;
 }
