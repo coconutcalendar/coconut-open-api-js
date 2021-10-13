@@ -148,6 +148,10 @@ Set an attribute which will tell the API to use the given invitation identifier 
 
 Set a relationship which will tell the API to use the given attendee model(s) when creating a new appointment.
 
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to allow invite only location, service and user to be used when creating an appointment.
+
 ##### Example
 
 ```javascript
@@ -225,6 +229,7 @@ class Appointments {
       .via(invitation)
       .with(attendee)
       .through(Origins.MODERN_CLIENT_VIEW)
+      .withInviteOnly()
       .notify(Notifications.ALL)
       .book();
   }
@@ -441,6 +446,10 @@ Set a filter which will tell the API which resource the request comes from. Curr
 
 Set a filter which will tell the API to return only virtual locations.
 
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to allow locations that are invite only or have invite only services or users assigned to them.
+
 ##### Example
 
 ```javascript
@@ -464,6 +473,7 @@ class Locations {
       .providing(services)
       .physical()
       .supporting(method)
+      .withInviteOnly()
       .sortBy(sortable)
       .through(resource)
       .on(page)
@@ -643,6 +653,10 @@ Set the limit which you want returned.
 
 Set a filter which will tell the API which resource the request comes from. Currently, only 'client_view' is supported.
 
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to allow services that are invite only or have invite only locations or users assigned to them.
+
 ##### Example
 
 ```javascript
@@ -664,6 +678,7 @@ class Services {
       .located({ region })
       .supporting(method)
       .through(resource)
+      .withInviteOnly()
       .on(page)
       .sortBy(sortable)
       .take(limit)
@@ -740,6 +755,10 @@ Set a filter which will tell the API to return time slots for users that support
 
 Set a filter which will tell the API whether to return time slots belonging to all resources or just public resources.
 
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to return time slots belonging to public and invite only resources.
+
 ##### Example
 
 ```javascript
@@ -762,6 +781,7 @@ class TimeSlots {
       .in('America/Chicago')
       .supporting(['en', 'fr', 'es'])
       .visibility(Visibilities.ALL)
+      .withInviteOnly()
       .get()
   }
 }
@@ -815,6 +835,10 @@ Set the limit which you want returned.
 
 Set a filter which will tell the API which resource the request comes from. Currently, only 'client_view' is supported.
 
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to allow users that are invite only or have invite only locations or services assigned to them.
+
 ##### Example
 
 ```javascript
@@ -834,6 +858,7 @@ class Users {
       .performing(services)
       .supporting(method)
       .through(resource)
+      .withInviteOnly()
       .on(page)
       .sortBy(sortable)
       .take(limit)
