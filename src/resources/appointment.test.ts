@@ -24,6 +24,22 @@ it('can set the booked through property', async () => {
   });
 })
 
+it('will set the invite only resources property to true by default', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withInviteOnly()).toHaveProperty('filters', {
+    invite_only_resources: true,
+  });
+});
+
+it('can set the invite only resources property to false', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withInviteOnly(false)).toHaveProperty('filters', {
+    invite_only_resources: false,
+  });
+});
+
 it('can set the location property', async () => {
   const resource = new Appointment(mockAxios);
 
@@ -263,6 +279,7 @@ it('can book an appointment with all available parameters', async () => {
       .source('test source')
       .term('test term')
       .actingAs(10)
+      .withInviteOnly()
       .with(
         attendee
           .alias('ABC-123')
@@ -296,6 +313,7 @@ it('can book an appointment with all available parameters', async () => {
           booked_through: Origins.MODERN_CLIENT_VIEW,
           booking_shortcut_id: 6,
           invitation_id: 5,
+          invite_only_resources: 1,
           location_id: 1,
           meeting_method: PHONE_CALL,
           service_id: [2, 3],

@@ -44,6 +44,22 @@ it('will set the invite only filter', async () => {
   });
 });
 
+it('will set the invite only resources filter to true by default', async () => {
+  const resource = new Location(mockAxios);
+
+  expect(resource.withInviteOnly()).toHaveProperty('filters', {
+    invite_only_resources: true,
+  });
+});
+
+it('can set the invite only resources filter to false', async () => {
+  const resource = new Location(mockAxios);
+
+  expect(resource.withInviteOnly(false)).toHaveProperty('filters', {
+    invite_only_resources: false,
+  });
+});
+
 it('will set the page we are on', async () => {
   const resource = new Location(mockAxios);
 
@@ -162,6 +178,7 @@ it('can string all filterable options together', async () => {
       .supporting(MeetingMethods.PHONE_CALL)
       .through('client_view')
       .located({ city: 'Fake City', country: 'FC', region: 'FR' })
+      .withInviteOnly()
       .take(5)
       .on(1),
   );
@@ -171,6 +188,7 @@ it('can string all filterable options together', async () => {
     city: 'Fake City',
     country: 'FC',
     invitable: 1,
+    invite_only_resources: true,
     method: MeetingMethods.PHONE_CALL,
     preferred: 1,
     region: 'FR',
@@ -206,6 +224,7 @@ it('can get locations with additional parameters', async () => {
     .supporting(MeetingMethods.PHONE_CALL)
     .through('client_view')
     .located({ city: 'Fake City', country: 'FC', region: 'FR' })
+    .withInviteOnly()
     .sortBy('created')
     .take(5)
     .on(1)
@@ -219,6 +238,7 @@ it('can get locations with additional parameters', async () => {
       'filter[client_view_meeting_method]': MeetingMethods.PHONE_CALL,
       'filter[country]': 'FC',
       'filter[invite_only]': 1,
+      'filter[invite_only_resources]': 1,
       'filter[preferred]': 1,
       'filter[province]': 'FR',
       'filter[service]': [1, 2],

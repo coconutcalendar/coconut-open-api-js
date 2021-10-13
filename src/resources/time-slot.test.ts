@@ -5,6 +5,22 @@ import Visibilities from "../constants/visibilities";
 
 import TimeSlot from './time-slot';
 
+it('will set the invite only resources filter to true by default', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.withInviteOnly()).toHaveProperty('filters', {
+    invite_only_resources: true,
+  });
+});
+
+it('can set the invite only resources filter to false', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.withInviteOnly(false)).toHaveProperty('filters', {
+    invite_only_resources: false,
+  });
+});
+
 it('will set location filter using a number', async () => {
   const resource = new TimeSlot(mockAxios);
 
@@ -120,12 +136,14 @@ it('can string all filterable options together', async () => {
       .method(MeetingMethods.AT_LOCATION)
       .excluding(1)
       .supporting(['en'])
-      .visibility(Visibilities.ALL),
+      .visibility(Visibilities.ALL)
+      .withInviteOnly(),
   );
 
   expected.toHaveProperty('filters', {
     end: '2018-01-31',
     exclusion: 1,
+    invite_only_resources: true,
     locales: ['en'],
     location: 1,
     method: MeetingMethods.AT_LOCATION,
@@ -151,6 +169,7 @@ it('can get time slots for no particular user', async () => {
     .in(timezone)
     .excluding(1)
     .visibility(Visibilities.ALL)
+    .withInviteOnly()
     .get();
 
   expect(mockAxios.get).toHaveBeenCalledTimes(1);
@@ -158,6 +177,7 @@ it('can get time slots for no particular user', async () => {
     params: {
       end: '2018-01-31',
       exclusion: 1,
+      invite_only_resources: 1,
       location_id: 1,
       service_id: [1, 2],
       start: '2018-01-01',

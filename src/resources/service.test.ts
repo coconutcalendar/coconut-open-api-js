@@ -19,6 +19,22 @@ it('will set assigned filter to false', async () => {
   });
 });
 
+it('will set the invite only resources filter to true by default', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withInviteOnly()).toHaveProperty('filters', {
+    invite_only_resources: true,
+  });
+});
+
+it('can set the invite only resources filter to false', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withInviteOnly(false)).toHaveProperty('filters', {
+    invite_only_resources: false,
+  });
+});
+
 it('will set location filter using a number', async () => {
   const resource = new Service(mockAxios);
 
@@ -155,6 +171,7 @@ it('can string all filterable options together', async () => {
       .preferred()
       .supporting(MeetingMethods.PHONE_CALL)
       .through('client_view')
+      .withInviteOnly()
       .sortBy('created')
       .take(5)
       .on(1),
@@ -165,6 +182,7 @@ it('can string all filterable options together', async () => {
     category: 3,
     group: 0,
     invitable: 1,
+    invite_only_resources: true,
     location: 1,
     method: MeetingMethods.PHONE_CALL,
     preferred: 1,
@@ -200,6 +218,7 @@ it('can get services with additional parameters', async () => {
     .preferred()
     .supporting(MeetingMethods.PHONE_CALL)
     .through('client_view')
+    .withInviteOnly()
     .sortBy('created')
     .take(5)
     .on(1)
@@ -213,6 +232,7 @@ it('can get services with additional parameters', async () => {
       'filter[client_view_meeting_method]': MeetingMethods.PHONE_CALL,
       'filter[group]': 0,
       'filter[invite_only]': 1,
+      'filter[invite_only_resources]': 1,
       'filter[location]': 1,
       'filter[preferred]': 1,
       'filter[province]': 'SK',
