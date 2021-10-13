@@ -6,6 +6,7 @@ import Conditional, { ConditionalResource } from './conditional';
 
 export interface AppointmentFilter {
   invitation?: number;
+  invite_only_resources?: boolean,
   locale?: string | null;
   location?: number;
   matchers?: AppointmentMatcherParameters;
@@ -45,6 +46,7 @@ export interface AppointmentParameters {
       booked_through?: number;
       booking_shortcut_id?: number;
       invitation_id: number | null;
+      invite_only_resources?: number;
       location_id: number | undefined;
       meeting_method?: number;
       service_id: number | number[] | undefined;
@@ -152,6 +154,8 @@ export interface AppointmentResource extends Resource, ConditionalResource {
   via(invitation: number): this;
 
   with(attendees: AttendeeModel | AttendeeModel[]): this;
+
+  withInviteOnly(invite_only_resources?: boolean): this;
 }
 
 export interface Utm {
@@ -342,6 +346,12 @@ export default class Appointment extends Conditional implements AppointmentResou
     return this;
   }
 
+  public withInviteOnly(invite_only_resources: boolean = true): this {
+    this.filters.invite_only_resources = invite_only_resources;
+
+    return this;
+  }
+
   protected addParams(): AddAttendeeParameters {
     const params: AddAttendeeParameters = {
       data: this.transformAttendees(),
@@ -414,6 +424,10 @@ export default class Appointment extends Conditional implements AppointmentResou
 
       if (this.filters.invitation) {
         params.data.attributes.invitation_id = this.filters.invitation;
+      }
+
+      if (this.filters.invite_only_resources) {
+        params.data.attributes.invite_only_resources = Number(this.filters.invite_only_resources);
       }
 
       if (this.filters.method) {

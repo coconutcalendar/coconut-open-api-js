@@ -18,6 +18,7 @@ export interface LocationFilter {
   [key: string]: any;
   assigned?: boolean;
   invitable?: number;
+  invite_only_resources?: boolean;
   preferred?: number;
   method?: number;
   services?: number | number[] | string | string[];
@@ -32,6 +33,7 @@ export interface LocationParameters {
   client_view_meeting_method?: number;
   country?: string;
   invite_only?: number;
+  invite_only_resources?: number;
   preferred?: number;
   province?: string;
   service?: number | number[] | string | string[];
@@ -64,6 +66,8 @@ export interface LocationResource extends Pageable, ConditionalResource {
   through(resource: string): this;
 
   virtual(): this;
+
+  withInviteOnly(invite_only_resources?: boolean): this;
 }
 
 export default class Location extends Conditional implements LocationResource {
@@ -208,6 +212,12 @@ export default class Location extends Conditional implements LocationResource {
     return this;
   }
 
+  public withInviteOnly(invite_only_resources: boolean = true): this {
+    this.filters.invite_only_resources = invite_only_resources;
+
+    return this;
+  }
+
   protected params(): LocationParameters {
     const params: LocationParameters = {};
 
@@ -225,6 +235,10 @@ export default class Location extends Conditional implements LocationResource {
 
     if (typeof this.filters.invitable !== 'undefined') {
       params.invite_only = this.filters.invitable;
+    }
+
+    if (this.filters.invite_only_resources) {
+      params.invite_only_resources = Number(this.filters.invite_only_resources);
     }
 
     if (typeof this.filters.method !== 'undefined') {

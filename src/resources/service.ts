@@ -17,6 +17,7 @@ export interface ServiceFilter {
   category?: number | string;
   group?: number;
   invitable?: number;
+  invite_only_resources?: boolean,
   location?: number | string;
   method?: number;
   preferred?: number;
@@ -30,6 +31,7 @@ export interface ServiceParameters {
   client_view_meeting_method?: number;
   group?: number;
   invite_only?: number;
+  invite_only_resources?: number,
   location?: number | string;
   preferred?: number;
   province?: string;
@@ -59,6 +61,8 @@ export interface ServiceResource extends Pageable, ConditionalResource {
   supporting(method: number): this;
 
   through(resource: string): this;
+
+  withInviteOnly(invite_only_resources?: boolean): this;
 }
 
 export default class Service extends Conditional implements ServiceResource {
@@ -189,6 +193,12 @@ export default class Service extends Conditional implements ServiceResource {
     return this;
   }
 
+  public withInviteOnly(invite_only_resources: boolean = true): this {
+    this.filters.invite_only_resources = invite_only_resources;
+
+    return this;
+  }
+
   protected params(): ServiceParameters {
     const params: ServiceParameters = {};
 
@@ -208,6 +218,10 @@ export default class Service extends Conditional implements ServiceResource {
       params.invite_only = this.filters.invitable;
     }
 
+    if (this.filters.invite_only_resources) {
+      params.invite_only_resources = Number(this.filters.invite_only_resources);
+    }
+
     if (typeof this.filters.location !== 'undefined') {
       params.location = this.filters.location;
     }
@@ -223,7 +237,7 @@ export default class Service extends Conditional implements ServiceResource {
     if (typeof this.filters.region !== 'undefined') {
       params.province = this.filters.region;
     }
-    
+
     if (typeof this.filters.resource !== 'undefined') {
       params.resource = this.filters.resource;
     }
