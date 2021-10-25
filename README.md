@@ -152,6 +152,10 @@ Set a relationship which will tell the API to use the given attendee model(s) wh
 
 Set an attribute which will tell the API to allow invite only location, service and user to be used when creating an appointment.
 
+- `withoutMeetingLink(skipMeetingLinkGeneration?: boolean)`
+
+Set an attribute which will tell the API to skip the meeting link generation when creating an appointment.
+
 ##### Example
 
 ```javascript
@@ -230,6 +234,7 @@ class Appointments {
       .with(attendee)
       .through(Origins.MODERN_CLIENT_VIEW)
       .withInviteOnly()
+      .withoutMeetingLink()
       .notify(Notifications.ALL)
       .book();
   }
@@ -259,6 +264,7 @@ class Appointments {
       return this.api
         .appointments()
         .starting(start)
+        .withoutMeetingLink()
         .notify(Notifications.ALL)
         .reschedule(appointment, code);
     }
