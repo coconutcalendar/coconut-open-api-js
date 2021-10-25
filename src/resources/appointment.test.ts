@@ -202,6 +202,22 @@ it('can set multiple attendees for the appointment', async () => {
   });
 });
 
+it('will set the skip meeting link generation property to true by default', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withoutMeetingLink()).toHaveProperty('filters', {
+    skip_meeting_link_generation: true,
+  });
+});
+
+it('can set the skip meeting link generation property to false', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withoutMeetingLink(false)).toHaveProperty('filters', {
+    skip_meeting_link_generation: false,
+  });
+});
+
 it('can set an identifier for who we are acting as when booking the appointment', async () => {
   const resource = new Appointment(mockAxios);
 
@@ -280,6 +296,7 @@ it('can book an appointment with all available parameters', async () => {
       .term('test term')
       .actingAs(10)
       .withInviteOnly()
+      .withoutMeetingLink()
       .with(
         attendee
           .alias('ABC-123')
@@ -367,6 +384,7 @@ it('can book an appointment with all available parameters', async () => {
       meta: {
         booker: 10,
         notify: notification,
+        skip_meeting_link_generation: true,
         utm: {
           campaign: 'test campaign',
           content: 'test content',
@@ -642,6 +660,7 @@ it('can reschedule an appointment with all available parameters', async () => {
       .starting(start)
       .in('America/Toronto')
       .notify(notification)
+      .withoutMeetingLink()
       .reschedule(1, 'code');
 
     expect(mockAxios.patch).toHaveBeenCalledWith('appointments/1?code=code', {
@@ -655,6 +674,7 @@ it('can reschedule an appointment with all available parameters', async () => {
       },
       meta: {
         notify: notification,
+        skip_meeting_link_generation: true,
       },
     });
   }

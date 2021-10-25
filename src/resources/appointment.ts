@@ -14,6 +14,7 @@ export interface AppointmentFilter {
   notifications?: AppointmentNotificationParameters;
   services?: number | number[];
   shortcut?: number;
+  skip_meeting_link_generation?: boolean;
   start?: string;
   through?: number;
   timezone?: string;
@@ -68,6 +69,7 @@ export interface AppointmentParameters {
       client?: boolean;
       user?: boolean;
     };
+    skip_meeting_link_generation?: boolean;
     utm?: {
       campaign?: string;
       content?: string;
@@ -92,6 +94,7 @@ export interface RescheduleParameters {
       client?: boolean;
       user?: boolean;
     };
+    skip_meeting_link_generation?: boolean;
   };
 }
 
@@ -156,6 +159,8 @@ export interface AppointmentResource extends Resource, ConditionalResource {
   with(attendees: AttendeeModel | AttendeeModel[]): this;
 
   withInviteOnly(inviteOnlyResources?: boolean): this;
+
+  withoutMeetingLink(skipMeetingLinkGeneration?: boolean): this;
 }
 
 export interface Utm {
@@ -352,6 +357,12 @@ export default class Appointment extends Conditional implements AppointmentResou
     return this;
   }
 
+  public withoutMeetingLink(skipMeetingLinkGeneration: boolean = true): this {
+    this.filters.skip_meeting_link_generation = skipMeetingLinkGeneration;
+
+    return this;
+  }
+
   protected addParams(): AddAttendeeParameters {
     const params: AddAttendeeParameters = {
       data: this.transformAttendees(),
@@ -447,7 +458,6 @@ export default class Appointment extends Conditional implements AppointmentResou
       }
     }
 
-
     if (this.filters.notifications) {
       params = {
         ...params,
@@ -483,6 +493,16 @@ export default class Appointment extends Conditional implements AppointmentResou
       }
     }
 
+    if (this.filters.skip_meeting_link_generation) {
+      params = {
+        ...params,
+        meta: {
+          ...params.meta,
+          skip_meeting_link_generation: this.filters.skip_meeting_link_generation,
+        }
+      }
+    }
+    
     return params;
   }
 
@@ -508,6 +528,16 @@ export default class Appointment extends Conditional implements AppointmentResou
           notify: this.filters.notifications,
         },
       };
+    }
+
+    if (this.filters.skip_meeting_link_generation) {
+      params = {
+        ...params,
+        meta: {
+          ...params.meta,
+          skip_meeting_link_generation: this.filters.skip_meeting_link_generation,
+        }
+      }
     }
 
     return params;
