@@ -152,6 +152,10 @@ Set a relationship which will tell the API to use the given attendee model(s) wh
 
 Set an attribute which will tell the API to allow invite only location, service and user to be used when creating an appointment.
 
+- `withinUserCategory(userCategory: number)`
+
+Set a relationship which will tell the API to use the given user category identifier when creating an appointment.
+
 - `withoutMeetingLink(skipMeetingLinkGeneration?: boolean)`
 
 Set an attribute which will tell the API to skip the meeting link generation when creating an appointment.
@@ -201,7 +205,7 @@ class Appointments {
   async book(attributes) {
     const {
       address, campaign, city, content, country, email, firstName, invitation, language, lastName,
-      location, locale, medium, notes, phone, question, service, source, start, term, timezone, user, users, value,
+      location, locale, medium, notes, phone, question, service, source, start, term, timezone, user, userCategory, users, value,
     } = attributes;
 
     const answer = (new Answer())
@@ -234,6 +238,7 @@ class Appointments {
       .with(attendee)
       .through(Origins.MODERN_CLIENT_VIEW)
       .withInviteOnly()
+      .withinUserCategory(userCategory)
       .withoutMeetingLink()
       .notify(Notifications.ALL)
       .book();
@@ -456,6 +461,10 @@ Set a filter which will tell the API to return only virtual locations.
 
 Set an attribute which will tell the API to allow locations that are invite only or have invite only services or users assigned to them.
 
+- `withinUserCategory(userCategory: number | string)`
+
+Set a filter which will tell the API to return locations where users assigned to it are within the category matching the provided identifier.
+
 ##### Example
 
 ```javascript
@@ -470,7 +479,7 @@ class Locations {
     return await this.api.details(identifier);
   }
 
-  async get({ page, limit, method, resource, services, sortable, user }) {
+  async get({ page, limit, method, resource, services, sortable, user, userCategory }) {
     return await this.api
       .locations()
       .assigned()
@@ -480,6 +489,7 @@ class Locations {
       .physical()
       .supporting(method)
       .withInviteOnly()
+      .withinUserCategory(userCategory)
       .sortBy(sortable)
       .through(resource)
       .on(page)
@@ -663,6 +673,10 @@ Set a filter which will tell the API which resource the request comes from. Curr
 
 Set an attribute which will tell the API to allow services that are invite only or have invite only locations or users assigned to them.
 
+- `withinUserCategory(userCategory: number | string)`
+
+Set a filter which will tell the API to return services that are provided by user within the category matching the provided identifier.
+
 ##### Example
 
 ```javascript
@@ -673,7 +687,7 @@ class Services {
     this.api = new OpenApi();
   }
 
-  async get({ category, limit, location, method, page, region, resource, sortable, user }) {
+  async get({ category, limit, location, method, page, region, resource, sortable, user, userCategory }) {
     return await this.api
       .services()
       .assigned()
@@ -685,6 +699,7 @@ class Services {
       .supporting(method)
       .through(resource)
       .withInviteOnly()
+      .withinUserCategory(userCategory)
       .on(page)
       .sortBy(sortable)
       .take(limit)
@@ -765,6 +780,10 @@ Set a filter which will tell the API whether to return time slots belonging to a
 
 Set an attribute which will tell the API to return time slots belonging to public and invite only resources.
 
+- `withinUserCategory(userCategory: number)`
+
+Set a filter which will tell the API to return time slots that are specifically for users within the category matching the provided identifier.
+
 ##### Example
 
 ```javascript
@@ -775,7 +794,7 @@ class TimeSlots {
     this.api = new OpenApi();
   }
 
-  async get({ appointment, end, location, service, start, user, users }) {
+  async get({ appointment, end, location, service, start, user, userCategory, users }) {
     return await this.api
       .slots()
       .at(location)
@@ -788,6 +807,7 @@ class TimeSlots {
       .supporting(['en', 'fr', 'es'])
       .visibility(Visibilities.ALL)
       .withInviteOnly()
+      .withinUserCategory(userCategory)
       .get()
   }
 }
