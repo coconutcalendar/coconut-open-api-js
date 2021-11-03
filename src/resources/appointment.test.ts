@@ -56,6 +56,14 @@ it('can set the user property', async () => {
   });
 });
 
+it('can set the user category property', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withinUserCategory(1)).toHaveProperty('filters', {
+    user_category: 1,
+  });
+});
+
 it('can set the users property using a number', async () => {
   const resource = new Appointment(mockAxios);
 
@@ -296,6 +304,7 @@ it('can book an appointment with all available parameters', async () => {
       .term('test term')
       .actingAs(10)
       .withInviteOnly()
+      .withinUserCategory(1)
       .withoutMeetingLink()
       .with(
         attendee
@@ -334,6 +343,7 @@ it('can book an appointment with all available parameters', async () => {
           location_id: 1,
           meeting_method: PHONE_CALL,
           service_id: [2, 3],
+          staff_category_id: 1,
           staff_id: 4,
           start,
           supported_locale: 'fr',

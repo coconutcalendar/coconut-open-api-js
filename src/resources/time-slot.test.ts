@@ -46,6 +46,14 @@ it('will set user filter using a number', async () => {
   });
 });
 
+it('will set user category filter using a number', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.withinUserCategory(1)).toHaveProperty('filters', {
+    user_category: 1,
+  });
+});
+
 it('will set users filter using a number', async () => {
   const resource = new TimeSlot(mockAxios);
 
@@ -137,7 +145,8 @@ it('can string all filterable options together', async () => {
       .excluding(1)
       .supporting(['en'])
       .visibility(Visibilities.ALL)
-      .withInviteOnly(),
+      .withInviteOnly()
+      .withinUserCategory(1),
   );
 
   expected.toHaveProperty('filters', {
@@ -150,6 +159,7 @@ it('can string all filterable options together', async () => {
     services: [1, 2],
     start: '2018-01-01',
     user: 1,
+    user_category: 1,
     users: [1, 2],
     visibility: Visibilities.ALL,
   });
@@ -211,6 +221,37 @@ it('can get time slots for a specified user', async () => {
       location_id: 1,
       service_id: [1, 2],
       staff_id: 1,
+      start: '2018-01-01',
+      supported_locales: ['en', 'es'],
+      timezone,
+      visibility: Visibilities.ALL,
+    },
+  });
+});
+
+it('can get time slots for a specified user category', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  const timezones = ['America/Chicago', 'America/Toronto', 'Europe/Amsterdam', 'Europe/Paris'];
+  const timezone = timezones[Math.floor(Math.random() * timezones.length)];
+
+  await resource
+    .between('2018-01-01', '2018-01-31')
+    .at(1)
+    .for([1, 2])
+    .supporting(['en', 'es'])
+    .withinUserCategory(1)
+    .in(timezone)
+    .visibility(Visibilities.ALL)
+    .get();
+
+  expect(mockAxios.get).toHaveBeenCalledTimes(1);
+  expect(mockAxios.get).toHaveBeenCalledWith('times', {
+    params: {
+      end: '2018-01-31',
+      location_id: 1,
+      service_id: [1, 2],
+      staff_category_id: 1,
       start: '2018-01-01',
       supported_locales: ['en', 'es'],
       timezone,

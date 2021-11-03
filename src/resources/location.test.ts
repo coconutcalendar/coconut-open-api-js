@@ -36,6 +36,22 @@ it('will set user filter using a string', async () => {
   });
 });
 
+it('will set user category filter using a number', async () => {
+  const resource = new Location(mockAxios);
+
+  expect(resource.withinUserCategory(1)).toHaveProperty('filters', {
+    user_category: 1,
+  });
+});
+
+it('will set user category filter using a string', async () => {
+  const resource = new Location(mockAxios);
+
+  expect(resource.withinUserCategory('identifier')).toHaveProperty('filters', {
+    user_category: 'identifier',
+  });
+});
+
 it('will set the invite only filter', async () => {
   const resource = new Location(mockAxios);
 
@@ -179,6 +195,7 @@ it('can string all filterable options together', async () => {
       .through('client_view')
       .located({ city: 'Fake City', country: 'FC', region: 'FR' })
       .withInviteOnly()
+      .withinUserCategory(1)
       .take(5)
       .on(1),
   );
@@ -195,6 +212,7 @@ it('can string all filterable options together', async () => {
     resource: 'client_view',
     services: [1, 2],
     user: 1,
+    user_category: 1,
     virtual: 0,
   });
   expected.toHaveProperty('sortable', 'created');
@@ -225,6 +243,7 @@ it('can get locations with additional parameters', async () => {
     .through('client_view')
     .located({ city: 'Fake City', country: 'FC', region: 'FR' })
     .withInviteOnly()
+    .withinUserCategory(1)
     .sortBy('created')
     .take(5)
     .on(1)
@@ -244,6 +263,7 @@ it('can get locations with additional parameters', async () => {
       'filter[service]': [1, 2],
       'filter[resource]': 'client_view',
       'filter[user]': 1,
+      'filter[user_category]': 1,
       'filter[virtual]': 0,
       limit: 5,
       page: 1,
