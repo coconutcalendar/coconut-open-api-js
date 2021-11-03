@@ -24,6 +24,7 @@ export interface LocationFilter {
   services?: number | number[] | string | string[];
   resource?: string;
   user?: number | string;
+  user_category?: number | string;
   virtual?: number;
 }
 
@@ -39,6 +40,7 @@ export interface LocationParameters {
   service?: number | number[] | string | string[];
   resource?: string;
   user?: number | string;
+  user_category?: number | string;
   virtual?: number;
 }
 
@@ -68,6 +70,8 @@ export interface LocationResource extends Pageable, ConditionalResource {
   virtual(): this;
 
   withInviteOnly(inviteOnlyResources?: boolean): this;
+
+  withinUserCategory(userCategory: number | string): this;
 }
 
 export default class Location extends Conditional implements LocationResource {
@@ -218,6 +222,12 @@ export default class Location extends Conditional implements LocationResource {
     return this;
   }
 
+  public withinUserCategory(userCategory: number | string): this {
+    this.filters.user_category = userCategory;
+
+    return this;
+  }
+
   protected params(): LocationParameters {
     const params: LocationParameters = {};
 
@@ -263,6 +273,10 @@ export default class Location extends Conditional implements LocationResource {
 
     if (typeof this.filters.user !== 'undefined') {
       params.user = this.filters.user;
+    }
+
+    if (typeof this.filters.user_category !== 'undefined') {
+      params.user_category = this.filters.user_category;
     }
 
     if (typeof this.filters.virtual !== 'undefined') {

@@ -19,6 +19,7 @@ export interface AppointmentFilter {
   through?: number;
   timezone?: string;
   user?: number;
+  user_category?: number;
   users?: number | number[];
 }
 
@@ -51,6 +52,7 @@ export interface AppointmentParameters {
       location_id: number | undefined;
       meeting_method?: number;
       service_id: number | number[] | undefined;
+      staff_category_id?: number;
       staff_id: number | null;
       start: string | undefined;
       supported_locale: string | null;
@@ -159,6 +161,8 @@ export interface AppointmentResource extends Resource, ConditionalResource {
   with(attendees: AttendeeModel | AttendeeModel[]): this;
 
   withInviteOnly(inviteOnlyResources?: boolean): this;
+
+  withinUserCategory(userCategory: number): this;
 
   withoutMeetingLink(skipMeetingLinkGeneration?: boolean): this;
 }
@@ -356,6 +360,12 @@ export default class Appointment extends Conditional implements AppointmentResou
 
     return this;
   }
+  
+  public withinUserCategory(userCategory: number): this {
+    this.filters.user_category = userCategory;
+
+    return this;
+  }
 
   public withoutMeetingLink(skipMeetingLinkGeneration: boolean = true): this {
     this.filters.skip_meeting_link_generation = skipMeetingLinkGeneration;
@@ -427,6 +437,10 @@ export default class Appointment extends Conditional implements AppointmentResou
 
       if (this.filters.user) {
         params.data.attributes.staff_id = this.filters.user;
+      }
+
+      if (this.filters.user_category) {
+        params.data.attributes.staff_category_id = this.filters.user_category;
       }
 
       if (this.filters.users) {
