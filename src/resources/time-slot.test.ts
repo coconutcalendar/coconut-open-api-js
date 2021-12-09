@@ -131,6 +131,14 @@ it('will set a visibility filter', async () => {
   });
 });
 
+it('will set a google token filter', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.google('token')).toHaveProperty('filters', {
+    google: 'token',
+  });
+});
+
 it('can string all filterable options together', async () => {
   const resource = new TimeSlot(mockAxios);
 
