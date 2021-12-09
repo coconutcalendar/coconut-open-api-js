@@ -764,6 +764,10 @@ Set a filter which will tell the API to return time slots that are specifically 
 
 Send the API request using the pre-set filters.
 
+- `google(token: string)`
+
+Set a filter which will tell the API to return time slots that are not conflicting with events associated with the Google access token.
+
 - `in(timezone: string)`
 
 Set a filter which will tell the API to return time slots in the given timezone.
@@ -794,13 +798,14 @@ class TimeSlots {
     this.api = new OpenApi();
   }
 
-  async get({ appointment, end, location, service, start, user, userCategory, users }) {
+  async get({ appointment, end, location, service, start, token, user, userCategory, users }) {
     return await this.api
       .slots()
       .at(location)
       .attendedBy(users)
       .by(user)
       .for(service)
+      .google(token)
       .between(start, end)
       .excluding(appointment)
       .in('America/Chicago')
