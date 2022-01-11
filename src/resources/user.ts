@@ -16,6 +16,7 @@ export interface UserFilter {
   assigned?: boolean;
   invite_only_resources?: boolean,
   location?: number | string;
+  location_category?: number | string;
   method?: number;
   resource?: string;
   services?: number | number[] | string | string[];
@@ -27,6 +28,7 @@ export interface UserParameters {
   client_view_meeting_method?: number;
   invite_only_resources?: number,
   location?: number | string;
+  location_category?: number | string;
   meeting_method?: number;
   province?: string;
   resource?: string;
@@ -50,6 +52,8 @@ export interface UserResource extends Pageable, ConditionalResource {
   through(resource: string): this;
 
   withInviteOnly(inviteOnlyResources?: boolean): this;
+  
+  withinLocationCategory(locationCategory?: number | string): this;
 }
 
 export default class User extends Conditional implements UserResource {
@@ -162,6 +166,12 @@ export default class User extends Conditional implements UserResource {
     return this;
   }
 
+  public withinLocationCategory(locationCategory: number | string): this {
+    this.filters.location_category = locationCategory;
+
+    return this;
+  }
+
   protected params(): UserParameters {
     const params: UserParameters = {};
 
@@ -175,6 +185,10 @@ export default class User extends Conditional implements UserResource {
 
     if (typeof this.filters.location !== 'undefined') {
       params.location = this.filters.location;
+    }
+
+    if (typeof this.filters.location_category !== 'undefined') {
+      params.location_category = this.filters.location_category;
     }
 
     if (typeof this.filters.method !== 'undefined') {
