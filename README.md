@@ -870,6 +870,10 @@ Set a filter which will tell the API which resource the request comes from. Curr
 
 Set an attribute which will tell the API to allow users that are invite only or have invite only locations or services assigned to them.
 
+- `withinLocationCategory(locationCategory?: number | string)`
+
+Set a filter which will tell the API to return users that are specifically for users within the location category matching the provided identifier.
+
 ##### Example
 
 ```javascript
