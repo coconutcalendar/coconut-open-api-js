@@ -874,6 +874,10 @@ Set an attribute which will tell the API to allow users that are invite only or 
 
 Set a filter which will tell the API to return users that are specifically for users within the location category matching the provided identifier.
 
+- `withinUserCategory(userCategory?: number | string)`
+
+Set a filter which will tell the API to return users that are specifically for users within the user category matching the provided identifier.
+
 ##### Example
 
 ```javascript
