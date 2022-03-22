@@ -99,6 +99,22 @@ it('will set user filter using a number', async () => {
   });
 });
 
+it('will set user category filter using a string', async () => {
+  const resource = new User(mockAxios);
+
+  expect(resource.withinUserCategory('1')).toHaveProperty('filters', {
+    category: '1',
+  });
+});
+
+it('will set user category filter using a number', async () => {
+  const resource = new User(mockAxios);
+
+  expect(resource.withinUserCategory(1)).toHaveProperty('filters', {
+    category: 1,
+  });
+});
+
 it('will set the page we are on', async () => {
   const resource = new User(mockAxios);
 
