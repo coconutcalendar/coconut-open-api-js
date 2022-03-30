@@ -160,6 +160,10 @@ Set a relationship which will tell the API to use the given user category identi
 
 Set an attribute which will tell the API to skip the meeting link generation when creating an appointment.
 
+- `workflow(workflow: number)`
+
+Set a relationship which will tell the API to use the given workflow identifier when creating an appointment.
+
 ##### Example
 
 ```javascript
@@ -172,7 +176,7 @@ class Appointments {
 
   async add(attributes) {
     const {
-      address, appointment, campaign, city, content, country, email, firstName, 
+      address, appointment, campaign, city, content, country, email, firstName,
       language, lastName, medium, notes, phone, question, source, term, value,
     } = attributes;
 
@@ -205,7 +209,7 @@ class Appointments {
   async book(attributes) {
     const {
       address, campaign, city, content, country, email, firstName, invitation, language, lastName,
-      location, locale, medium, notes, phone, question, service, source, start, term, timezone, user, userCategory, users, value,
+      location, locale, medium, notes, phone, question, service, source, start, term, timezone, user, userCategory, users, value, workflow,
     } = attributes;
 
     const answer = (new Answer())
@@ -240,6 +244,7 @@ class Appointments {
       .withInviteOnly()
       .withinUserCategory(userCategory)
       .withoutMeetingLink()
+      .workflow(workflow)
       .notify(Notifications.ALL)
       .book();
   }
@@ -264,7 +269,7 @@ class Appointments {
   async fetch({ code, id }) {
     return this.api.appointments().matching({ code, id }).get();
   }
-  
+
   async reschedule({ appointment, code, start }) {
       return this.api
         .appointments()
@@ -496,7 +501,7 @@ class Locations {
       .take(limit)
       .get();
   }
-  
+
   async suggestions(query) {
     return await this.api.suggest(query);
   }
@@ -517,7 +522,7 @@ Set an attribute to say that the preference is for the next available opening.
 
 - `on(day: number)`
 
-Set the attribute to determine the preferred day of the wait list request preference and that it should only be for the certain supplied days. 
+Set the attribute to determine the preferred day of the wait list request preference and that it should only be for the certain supplied days.
 
 ##### Example
 
