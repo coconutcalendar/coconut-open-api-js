@@ -8,6 +8,14 @@ import Attendee from '../models/attendee';
 import Response from '../models/response';
 import Appointment, {AppointmentMatcherParameters, AppointmentNotificationParameters} from './appointment';
 
+it('can set the workflow property', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.workflow(12)).toHaveProperty('filters', {
+    workflow: 12,
+  });
+})
+
 it('can set the invitation property', async () => {
   const resource = new Appointment(mockAxios);
 
