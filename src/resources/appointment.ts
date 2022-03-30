@@ -21,6 +21,7 @@ export interface AppointmentFilter {
   user?: number;
   user_category?: number;
   users?: number | number[];
+  workflow?: number;
 }
 
 export interface UtmParameters {
@@ -57,6 +58,7 @@ export interface AppointmentParameters {
       start: string | undefined;
       supported_locale: string | null;
       timezone?: string;
+      workflow_id?: number | null;
     };
     relationships: {
       attendees: {
@@ -165,6 +167,8 @@ export interface AppointmentResource extends Resource, ConditionalResource {
   withinUserCategory(userCategory: number): this;
 
   withoutMeetingLink(skipMeetingLinkGeneration?: boolean): this;
+
+  workflow(workflow: number): this;
 }
 
 export interface Utm {
@@ -360,7 +364,7 @@ export default class Appointment extends Conditional implements AppointmentResou
 
     return this;
   }
-  
+
   public withinUserCategory(userCategory: number): this {
     this.filters.user_category = userCategory;
 
@@ -369,6 +373,12 @@ export default class Appointment extends Conditional implements AppointmentResou
 
   public withoutMeetingLink(skipMeetingLinkGeneration: boolean = true): this {
     this.filters.skip_meeting_link_generation = skipMeetingLinkGeneration;
+
+    return this;
+  }
+
+  public workflow(workflow: number): this {
+    this.filters.workflow = workflow;
 
     return this;
   }
@@ -470,6 +480,10 @@ export default class Appointment extends Conditional implements AppointmentResou
       if (this.filters.shortcut) {
         params.data.attributes.booking_shortcut_id = this.filters.shortcut;
       }
+
+      if (this.filters.workflow) {
+        params.data.attributes.workflow_id = this.filters.workflow;
+      }
     }
 
     if (this.filters.notifications) {
@@ -516,7 +530,7 @@ export default class Appointment extends Conditional implements AppointmentResou
         }
       }
     }
-    
+
     return params;
   }
 
