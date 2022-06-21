@@ -140,6 +140,10 @@ Set an attribute which will tell the API to use the given string as the term UTM
 
 Set an attribute which will tell the API to use the given origin constant as the booked through value when creating an appointment.
 
+- `uploads(uploadedFiles: UploadedFile[])`
+
+Attach uploaded files when creating an appointment.
+
 - `via(invitation: number)`
 
 Set an attribute which will tell the API to use the given invitation identifier when creating an appointment.
@@ -176,8 +180,9 @@ class Appointments {
 
   async add(attributes) {
     const {
-      address, appointment, campaign, city, content, country, email, firstName,
-      language, lastName, medium, notes, phone, question, source, term, value,
+      address, appointment, campaign, city, content, country, email, file,
+      firstName, key, language, lastName, medium, notes, phone, question,
+      source, term, value,
     } = attributes;
 
     const answer = (new Answer())
@@ -202,14 +207,17 @@ class Appointments {
       .term(term)
       .with(attendee)
       .through(Origins.MODERN_CLIENT_VIEW)
+      .uploads([{ key, file }])
       .notify(Notifications.ALL)
       .add(appointment);
   }
 
   async book(attributes) {
     const {
-      address, campaign, city, content, country, email, firstName, invitation, language, lastName,
-      location, locale, medium, notes, phone, question, service, source, start, term, timezone, user, userCategory, users, value, workflow,
+      address, campaign, city, content, country, email, file, firstName, key, 
+      invitation, language, lastName, location, locale, medium, notes, phone, 
+      question, service, source, start, term, timezone, user, userCategory, 
+      users, value, workflow,
     } = attributes;
 
     const answer = (new Answer())
@@ -238,6 +246,7 @@ class Appointments {
       .source(source)
       .supporting(locale)
       .term(term)
+      .uploads([{ key, file }])
       .via(invitation)
       .with(attendee)
       .through(Origins.MODERN_CLIENT_VIEW)

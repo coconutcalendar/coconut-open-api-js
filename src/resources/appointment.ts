@@ -183,6 +183,15 @@ export interface Utm {
   term(term: string): this;
 }
 
+export interface FileUpload {
+  uploads(uploadedFiles: UploadedFile[]): this;
+}
+
+export interface UploadedFile {
+  key: string;
+  file: File;
+}
+
 export interface AppointmentRelationship {
   attendees: AttendeeModel[] | [];
 }
@@ -191,11 +200,12 @@ export interface AppointmentMeta {
   booker?: number;
 }
 
-export default class Appointment extends Conditional implements AppointmentResource, Utm {
+export default class Appointment extends Conditional implements AppointmentResource, Utm, FileUpload {
   protected client: AxiosInstance;
   protected filters: AppointmentFilter;
   protected meta: AppointmentMeta;
   protected relationships: AppointmentRelationship;
+  protected uploadedFiles: UploadedFile[];
   protected utm: UtmParameters;
 
   constructor(client: AxiosInstance) {
@@ -208,6 +218,7 @@ export default class Appointment extends Conditional implements AppointmentResou
       attendees: [],
     };
     this.utm = {};
+    this.uploadedFiles = [];
   }
 
   public actingAs(identifier: number): this {
@@ -217,6 +228,23 @@ export default class Appointment extends Conditional implements AppointmentResou
   }
 
   public async add(appointment: number): Promise<any> {
+    if (this.uploadedFiles.length > 0) {
+      const formData = new FormData();
+
+      formData.append('contentType', 'application/json; ext=bulk');
+
+      formData.append('data', JSON.stringify(this.addParams()));
+
+      this.uploadedFiles.forEach((uploadedFile: UploadedFile) => {
+        formData.append(uploadedFile.key, uploadedFile.file);
+      });
+
+      // method spoofing because PUT doesn't upload files
+      formData.append('_method', 'PUT')
+
+      return await this.client.post(`appointments/${appointment}/attendees`, formData);
+    }
+
     return await this.client.put(`appointments/${appointment}/attendees`, this.addParams(), {
       headers: {
         'Content-Type': 'application/json; ext=bulk',
@@ -237,6 +265,18 @@ export default class Appointment extends Conditional implements AppointmentResou
   }
 
   public async book(): Promise<any> {
+    if (this.uploadedFiles.length > 0) {
+      const formData = new FormData();
+
+      formData.append('data', JSON.stringify(this.params()));  
+
+      this.uploadedFiles.forEach((uploadedFile: UploadedFile) => {
+        formData.append(uploadedFile.key, uploadedFile.file);
+      });
+
+      return await this.client.post('appointments', formData);
+    }
+
     return await this.client.post('appointments', this.params());
   }
 
@@ -345,6 +385,12 @@ export default class Appointment extends Conditional implements AppointmentResou
     this.filters.through = origin;
 
     return this
+  }
+
+  public uploads(uploadedFiles: UploadedFile[]): this {
+    this.uploadedFiles = uploadedFiles;
+
+    return this;
   }
 
   public via(invitation: number): this {

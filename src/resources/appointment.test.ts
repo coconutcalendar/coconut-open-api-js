@@ -699,3 +699,89 @@ it('can reschedule an appointment with all available parameters', async () => {
 
   expect(mockAxios.patch).toHaveBeenCalledTimes(3);
 });
+
+it('can book an appointment with a file upload', async () => {
+  const resource = new Appointment(mockAxios);
+  const start = '2022-06-20 12:00:00';
+  const attendee = new Attendee();
+  const uploadedFile = {
+    key: '0afbdaab-cdaa-44ae-b28b-110b1d77d9fa',
+    file: new File(['image'], 'image.png', { type: 'image/png' }),
+  };
+  const formData = new FormData();
+
+  formData.append('data', JSON.stringify({
+    data: {
+      relationships: {
+        attendees: {
+          data: [
+            {
+              type: 'attendees',
+              attributes: {
+                email: 'jane@doe.com',
+                first_name: 'Jane',
+                last_name: 'Doe',
+              },
+            },
+          ],
+        },
+      },
+      type: 'appointments',
+      attributes: {
+        invitation_id: null,
+        location_id: 1,
+        service_id: 2,
+        staff_id: null,
+        start,
+        supported_locale: null,
+      },
+    },
+  }));
+  formData.append(uploadedFile.key, uploadedFile.file);
+
+  await resource
+    .at(1)
+    .for(2)
+    .starting(start)
+    .with(attendee.named('Jane', 'Doe').reachable({ email: 'jane@doe.com' }))
+    .uploads([uploadedFile])
+    .book();
+
+  expect(mockAxios.post).toHaveBeenCalledTimes(1);
+  expect(mockAxios.post).toHaveBeenCalledWith('appointments', formData);
+});
+
+it('can add the given attendee to the given appointment with a file upload', async () => {
+  const resource = new Appointment(mockAxios);
+  const attendee = (new Attendee()).named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
+  const uploadedFile = {
+    key: '0afbdaab-cdaa-44ae-b28b-110b1d77d9fa',
+    file: new File(['image'], 'image.png', { type: 'image/png' }),
+  };
+  const formData = new FormData();
+
+  formData.append('contentType', 'application/json; ext=bulk');
+  formData.append('data', JSON.stringify({
+    data: [
+      {
+        type: 'attendees',
+        attributes: {
+          email: 'jane@doe.com',
+          first_name: 'Jane',
+          last_name: 'Doe',
+        },
+      }
+    ],
+    meta: {
+      booker: 10,
+    },
+  }));
+  formData.append(uploadedFile.key, uploadedFile.file);
+  formData.append('_method', 'PUT');
+
+  await resource.with(attendee).uploads([uploadedFile]).actingAs(10).add(1);
+
+  expect(mockAxios.put).toHaveBeenCalledTimes(0);
+  expect(mockAxios.post).toHaveBeenCalledTimes(1);
+  expect(mockAxios.post).toHaveBeenCalledWith('appointments/1/attendees', formData);
+});
