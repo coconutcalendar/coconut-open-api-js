@@ -311,6 +311,7 @@ it('can book an appointment with all available parameters', async () => {
       .source('test source')
       .term('test term')
       .actingAs(10)
+      .recaptcha('foo')
       .withInviteOnly()
       .withinUserCategory(1)
       .withoutMeetingLink()
@@ -350,6 +351,7 @@ it('can book an appointment with all available parameters', async () => {
           invite_only_resources: 1,
           location_id: 1,
           meeting_method: PHONE_CALL,
+          recaptcha_token: 'foo',
           service_id: [2, 3],
           staff_category_id: 1,
           staff_id: 4,
