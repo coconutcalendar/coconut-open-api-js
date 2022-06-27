@@ -151,6 +151,8 @@ export interface AppointmentResource extends Resource, ConditionalResource {
 
   notify(notifications: AppointmentNotificationParameters): this;
 
+  recaptcha(recaptchaToken: string): this;
+
   reschedule(appointment: number, code: string): Promise<any>;
 
   shortcut(shortcut: number): this;
