@@ -350,6 +350,12 @@ export default class Appointment extends Conditional implements AppointmentResou
     return this;
   }
 
+  public recaptcha(recaptchaToken: string): this {
+    this.filters.recaptcha_token = recaptchaToken;
+
+    return this;
+  }
+
   public async reschedule(appointment: number, code: string): Promise<any> {
     return await this.client.patch(`appointments/${appointment}?code=${code}`, this.rescheduleParams(appointment));
   }
