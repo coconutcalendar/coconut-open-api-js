@@ -12,6 +12,7 @@ export interface AppointmentFilter {
   matchers?: AppointmentMatcherParameters;
   method?: number;
   notifications?: AppointmentNotificationParameters;
+  recaptcha_token?: string | null;
   services?: number | number[];
   shortcut?: number;
   skip_meeting_link_generation?: boolean;
@@ -22,6 +23,7 @@ export interface AppointmentFilter {
   user_category?: number;
   users?: number | number[];
   workflow?: number;
+
 }
 
 export interface UtmParameters {
@@ -59,6 +61,7 @@ export interface AppointmentParameters {
       supported_locale: string | null;
       timezone?: string;
       workflow_id?: number | null;
+      recaptcha_token: string | null;
     };
     relationships: {
       attendees: {
@@ -530,6 +533,11 @@ export default class Appointment extends Conditional implements AppointmentResou
       if (this.filters.workflow) {
         params.data.attributes.workflow_id = this.filters.workflow;
       }
+
+      if (this.filters.recaptcha_token) {
+        params.data.attributes.recaptcha_token = this.filters.recaptcha_token;
+      }
+
     }
 
     if (this.filters.notifications) {
