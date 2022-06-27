@@ -54,6 +54,7 @@ export interface AppointmentParameters {
       invite_only_resources?: number;
       location_id: number | undefined;
       meeting_method?: number;
+      recaptcha_token: string | null;
       service_id: number | number[] | undefined;
       staff_category_id?: number;
       staff_id: number | null;
@@ -61,7 +62,6 @@ export interface AppointmentParameters {
       supported_locale: string | null;
       timezone?: string;
       workflow_id?: number | null;
-      recaptcha_token: string | null;
     };
     relationships: {
       attendees: {
@@ -488,6 +488,7 @@ export default class Appointment extends Conditional implements AppointmentResou
       params.data.attributes = {
         invitation_id: null,
         location_id: this.filters.location,
+        recaptcha_token: this.filters.recaptcha_token || null,
         service_id: this.filters.services,
         staff_id: null,
         start: this.filters.start,
@@ -533,11 +534,6 @@ export default class Appointment extends Conditional implements AppointmentResou
       if (this.filters.workflow) {
         params.data.attributes.workflow_id = this.filters.workflow;
       }
-
-      if (this.filters.recaptcha_token) {
-        params.data.attributes.recaptcha_token = this.filters.recaptcha_token;
-      }
-
     }
 
     if (this.filters.notifications) {
