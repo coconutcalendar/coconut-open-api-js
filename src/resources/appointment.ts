@@ -23,7 +23,6 @@ export interface AppointmentFilter {
   user_category?: number;
   users?: number | number[];
   workflow?: number;
-
 }
 
 export interface UtmParameters {
@@ -281,7 +280,6 @@ export default class Appointment extends Conditional implements AppointmentResou
 
       return await this.client.post('appointments', formData);
     }
-
     return await this.client.post('appointments', this.params());
   }
 
@@ -502,8 +500,7 @@ export default class Appointment extends Conditional implements AppointmentResou
         supported_locale: this.filters.locale || null,
       };
 
-      if (this.filters.recaptcha_token)
-      {
+      if (this.filters.recaptcha_token) {
         params.data.attributes.recaptcha_token = this.filters.recaptcha_token;
       }
 
