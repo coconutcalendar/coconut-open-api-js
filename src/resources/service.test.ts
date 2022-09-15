@@ -51,6 +51,22 @@ it('will set location filter using a string', async () => {
   });
 });
 
+it('will set location category filter using a string', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withinLocationCategory('identifier')).toHaveProperty('filters', {
+    location_category: 'identifier',
+  });
+});
+
+it('will set location category filter using a number', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withinLocationCategory(1)).toHaveProperty('filters', {
+    location_category: 1,
+  });
+});
+
 it('will set the locatable filters as supplied', async () => {
   const resource = new Service(mockAxios);
   const region = 'SK';
