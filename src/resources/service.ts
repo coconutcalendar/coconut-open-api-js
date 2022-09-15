@@ -19,6 +19,7 @@ export interface ServiceFilter {
   invitable?: number;
   invite_only_resources?: boolean,
   location?: number | string;
+  location_category?: number | string;
   method?: number;
   preferred?: number;
   resource?: string;
@@ -34,6 +35,7 @@ export interface ServiceParameters {
   invite_only?: number;
   invite_only_resources?: number,
   location?: number | string;
+  location_category?: number | string;
   preferred?: number;
   province?: string;
   resource?: string;
@@ -65,6 +67,8 @@ export interface ServiceResource extends Pageable, ConditionalResource {
   through(resource: string): this;
 
   withInviteOnly(inviteOnlyResources?: boolean): this;
+
+  withinLocationCategory(locationCategory: number | string): this;
 
   withinUserCategory(userCategory: number | string): this;
 }
@@ -203,6 +207,12 @@ export default class Service extends Conditional implements ServiceResource {
     return this;
   }
 
+  public withinLocationCategory(locationCategory: number | string): this {
+    this.filters.location_category = locationCategory;
+
+    return this;
+  }
+
   public withinUserCategory(userCategory: number | string): this {
     this.filters.user_category = userCategory;
 
@@ -254,6 +264,10 @@ export default class Service extends Conditional implements ServiceResource {
 
     if (typeof this.filters.user !== 'undefined') {
       params.user = this.filters.user;
+    }
+
+    if (typeof this.filters.location_category !== 'undefined') {
+      params.location_category = this.filters.location_category;
     }
 
     if (typeof this.filters.user_category !== 'undefined') {

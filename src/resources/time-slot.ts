@@ -9,6 +9,7 @@ export interface TimeSlotFilter {
   google?: string;
   invite_only_resources?: boolean,
   location?: number;
+  location_category?: number | string;
   method?: number;
   services?: number | number[];
   start?: string;
@@ -27,6 +28,7 @@ export interface TimeSlotParameters {
   google?: string;
   invite_only_resources?: number,
   location_id?: number;
+  location_category_id?: number | string;
   meeting_method?: number;
   service_id?: number | number[];
   staff_category_id?: number;
@@ -61,6 +63,8 @@ export interface TimeSlotResource extends Resource, ConditionalResource {
   visibility(visibility: number): this;
 
   withInviteOnly(inviteOnlyResources?: boolean): this;
+
+  withinLocationCategory(locationCategory: number | string): this;
 
   withinUserCategory(userCategory: number | string): this;
 }
@@ -137,6 +141,10 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
       params.supported_locales = this.filters.locales;
     }
 
+    if (this.filters.location_category) {
+      params.location_category_id = this.filters.location_category;
+    }
+
     if (this.filters.method) {
       params.meeting_method = this.filters.method;
     }
@@ -196,6 +204,12 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
 
   public withInviteOnly(inviteOnlyResources: boolean = true): this {
     this.filters.invite_only_resources = inviteOnlyResources;
+
+    return this;
+  }
+
+  public withinLocationCategory(locationCategory: number | string): this {
+    this.filters.location_category = locationCategory;
 
     return this;
   }
