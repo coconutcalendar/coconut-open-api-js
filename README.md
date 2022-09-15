@@ -687,6 +687,10 @@ Set a filter which will tell the API which resource the request comes from. Curr
 
 Set an attribute which will tell the API to allow services that are invite only or have invite only locations or users assigned to them.
 
+- `withinLocationCategory(locationCategory: number | string)`
+
+Set a filter which will tell the API to return users that are specifically for users within the location category matching the provided identifier.
+
 - `withinUserCategory(userCategory: number | string)`
 
 Set a filter which will tell the API to return services that are provided by user within the category matching the provided identifier.
@@ -701,7 +705,7 @@ class Services {
     this.api = new OpenApi();
   }
 
-  async get({ category, limit, location, method, page, region, resource, sortable, user, userCategory }) {
+  async get({ category, limit, location, locationCategory, method, page, region, resource, sortable, user, userCategory }) {
     return await this.api
       .services()
       .assigned()
@@ -713,6 +717,7 @@ class Services {
       .supporting(method)
       .through(resource)
       .withInviteOnly()
+      .withinLocationCategory(locationCategory)
       .withinUserCategory(userCategory)
       .on(page)
       .sortBy(sortable)
@@ -798,6 +803,10 @@ Set a filter which will tell the API whether to return time slots belonging to a
 
 Set an attribute which will tell the API to return time slots belonging to public and invite only resources.
 
+- `withinLocationCategory(locationCategory: number | string)`
+
+Set a filter which will tell the API to return users that are specifically for users within the location category matching the provided identifier.
+
 - `withinUserCategory(userCategory: number)`
 
 Set a filter which will tell the API to return time slots that are specifically for users within the category matching the provided identifier.
@@ -812,7 +821,7 @@ class TimeSlots {
     this.api = new OpenApi();
   }
 
-  async get({ appointment, end, location, service, start, token, user, userCategory, users }) {
+  async get({ appointment, end, location, locationCategory, service, start, token, user, userCategory, users }) {
     return await this.api
       .slots()
       .at(location)
@@ -826,6 +835,7 @@ class TimeSlots {
       .supporting(['en', 'fr', 'es'])
       .visibility(Visibilities.ALL)
       .withInviteOnly()
+      .withinLocationCategory(locationCategory)
       .withinUserCategory(userCategory)
       .get()
   }
@@ -902,7 +912,7 @@ class Users {
     this.api = new OpenApi();
   }
 
-  async get({ limit, location, method, page, region, resource, services, sortable }) {
+  async get({ limit, location, locationCategory, method, page, region, resource, services, sortable, userCategory }) {
     return await this.api
       .users()
       .assigned()
@@ -912,6 +922,8 @@ class Users {
       .supporting(method)
       .through(resource)
       .withInviteOnly()
+      .withinLocationCategory(locationCategory)
+      .withinUserCategory(userCategory)
       .on(page)
       .sortBy(sortable)
       .take(limit)
