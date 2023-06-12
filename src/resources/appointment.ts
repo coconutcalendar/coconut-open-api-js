@@ -6,18 +6,23 @@ import Conditional, { ConditionalResource } from './conditional';
 
 export interface AppointmentFilter {
   invitation?: number;
+  invite_only_resources?: boolean,
   locale?: string | null;
   location?: number;
   matchers?: AppointmentMatcherParameters;
   method?: number;
   notifications?: AppointmentNotificationParameters;
+  recaptcha_token?: string | null;
   services?: number | number[];
   shortcut?: number;
+  skip_meeting_link_generation?: boolean;
   start?: string;
   through?: number;
   timezone?: string;
   user?: number;
+  user_category?: number;
   users?: number | number[];
+  workflow?: number;
 }
 
 export interface UtmParameters {
@@ -45,13 +50,17 @@ export interface AppointmentParameters {
       booked_through?: number;
       booking_shortcut_id?: number;
       invitation_id: number | null;
+      invite_only_resources?: number;
       location_id: number | undefined;
       meeting_method?: number;
+      recaptcha_token?: string;
       service_id: number | number[] | undefined;
+      staff_category_id?: number;
       staff_id: number | null;
       start: string | undefined;
       supported_locale: string | null;
       timezone?: string;
+      workflow_id?: number | null;
     };
     relationships: {
       attendees: {
@@ -66,6 +75,7 @@ export interface AppointmentParameters {
       client?: boolean;
       user?: boolean;
     };
+    skip_meeting_link_generation?: boolean;
     utm?: {
       campaign?: string;
       content?: string;
@@ -90,6 +100,7 @@ export interface RescheduleParameters {
       client?: boolean;
       user?: boolean;
     };
+    skip_meeting_link_generation?: boolean;
   };
 }
 
@@ -139,6 +150,8 @@ export interface AppointmentResource extends Resource, ConditionalResource {
 
   notify(notifications: AppointmentNotificationParameters): this;
 
+  recaptcha(recaptchaToken: string): this;
+
   reschedule(appointment: number, code: string): Promise<any>;
 
   shortcut(shortcut: number): this;
@@ -152,6 +165,14 @@ export interface AppointmentResource extends Resource, ConditionalResource {
   via(invitation: number): this;
 
   with(attendees: AttendeeModel | AttendeeModel[]): this;
+
+  withInviteOnly(inviteOnlyResources?: boolean): this;
+
+  withinUserCategory(userCategory: number): this;
+
+  withoutMeetingLink(skipMeetingLinkGeneration?: boolean): this;
+
+  workflow(workflow: number): this;
 }
 
 export interface Utm {
@@ -166,6 +187,15 @@ export interface Utm {
   term(term: string): this;
 }
 
+export interface FileUpload {
+  uploads(uploadedFiles: UploadedFile[]): this;
+}
+
+export interface UploadedFile {
+  key: string;
+  file: File;
+}
+
 export interface AppointmentRelationship {
   attendees: AttendeeModel[] | [];
 }
@@ -174,11 +204,12 @@ export interface AppointmentMeta {
   booker?: number;
 }
 
-export default class Appointment extends Conditional implements AppointmentResource, Utm {
+export default class Appointment extends Conditional implements AppointmentResource, Utm, FileUpload {
   protected client: AxiosInstance;
   protected filters: AppointmentFilter;
   protected meta: AppointmentMeta;
   protected relationships: AppointmentRelationship;
+  protected uploadedFiles: UploadedFile[];
   protected utm: UtmParameters;
 
   constructor(client: AxiosInstance) {
@@ -191,6 +222,7 @@ export default class Appointment extends Conditional implements AppointmentResou
       attendees: [],
     };
     this.utm = {};
+    this.uploadedFiles = [];
   }
 
   public actingAs(identifier: number): this {
@@ -200,6 +232,23 @@ export default class Appointment extends Conditional implements AppointmentResou
   }
 
   public async add(appointment: number): Promise<any> {
+    if (this.uploadedFiles.length > 0) {
+      const formData = new FormData();
+
+      formData.append('contentType', 'application/json; ext=bulk');
+
+      formData.append('data', JSON.stringify(this.addParams()));
+
+      this.uploadedFiles.forEach((uploadedFile: UploadedFile) => {
+        formData.append(uploadedFile.key, uploadedFile.file);
+      });
+
+      // method spoofing because PUT doesn't upload files
+      formData.append('_method', 'PUT')
+
+      return await this.client.post(`appointments/${appointment}/attendees`, formData);
+    }
+
     return await this.client.put(`appointments/${appointment}/attendees`, this.addParams(), {
       headers: {
         'Content-Type': 'application/json; ext=bulk',
@@ -220,6 +269,18 @@ export default class Appointment extends Conditional implements AppointmentResou
   }
 
   public async book(): Promise<any> {
+    if (this.uploadedFiles.length > 0) {
+      const formData = new FormData();
+
+      formData.append('data', JSON.stringify(this.params()));  
+
+      this.uploadedFiles.forEach((uploadedFile: UploadedFile) => {
+        formData.append(uploadedFile.key, uploadedFile.file);
+      });
+
+      return await this.client.post('appointments', formData);
+    }
+
     return await this.client.post('appointments', this.params());
   }
 
@@ -290,6 +351,12 @@ export default class Appointment extends Conditional implements AppointmentResou
     return this;
   }
 
+  public recaptcha(recaptchaToken: string): this {
+    this.filters.recaptcha_token = recaptchaToken;
+
+    return this;
+  }
+
   public async reschedule(appointment: number, code: string): Promise<any> {
     return await this.client.patch(`appointments/${appointment}?code=${code}`, this.rescheduleParams(appointment));
   }
@@ -330,6 +397,12 @@ export default class Appointment extends Conditional implements AppointmentResou
     return this
   }
 
+  public uploads(uploadedFiles: UploadedFile[]): this {
+    this.uploadedFiles = uploadedFiles;
+
+    return this;
+  }
+
   public via(invitation: number): this {
     this.filters.invitation = invitation;
 
@@ -338,6 +411,30 @@ export default class Appointment extends Conditional implements AppointmentResou
 
   public with(attendees: AttendeeModel | AttendeeModel[]): this {
     this.relationships.attendees = Array.isArray(attendees) ? attendees : [attendees];
+
+    return this;
+  }
+
+  public withInviteOnly(inviteOnlyResources: boolean = true): this {
+    this.filters.invite_only_resources = inviteOnlyResources;
+
+    return this;
+  }
+
+  public withinUserCategory(userCategory: number): this {
+    this.filters.user_category = userCategory;
+
+    return this;
+  }
+
+  public withoutMeetingLink(skipMeetingLinkGeneration: boolean = true): this {
+    this.filters.skip_meeting_link_generation = skipMeetingLinkGeneration;
+
+    return this;
+  }
+
+  public workflow(workflow: number): this {
+    this.filters.workflow = workflow;
 
     return this;
   }
@@ -404,8 +501,16 @@ export default class Appointment extends Conditional implements AppointmentResou
         supported_locale: this.filters.locale || null,
       };
 
+      if (this.filters.recaptcha_token) {
+        params.data.attributes.recaptcha_token = this.filters.recaptcha_token;
+      }
+
       if (this.filters.user) {
         params.data.attributes.staff_id = this.filters.user;
+      }
+
+      if (this.filters.user_category) {
+        params.data.attributes.staff_category_id = this.filters.user_category;
       }
 
       if (this.filters.users) {
@@ -414,6 +519,10 @@ export default class Appointment extends Conditional implements AppointmentResou
 
       if (this.filters.invitation) {
         params.data.attributes.invitation_id = this.filters.invitation;
+      }
+
+      if (this.filters.invite_only_resources) {
+        params.data.attributes.invite_only_resources = Number(this.filters.invite_only_resources);
       }
 
       if (this.filters.method) {
@@ -431,8 +540,11 @@ export default class Appointment extends Conditional implements AppointmentResou
       if (this.filters.shortcut) {
         params.data.attributes.booking_shortcut_id = this.filters.shortcut;
       }
-    }
 
+      if (this.filters.workflow) {
+        params.data.attributes.workflow_id = this.filters.workflow;
+      }
+    }
 
     if (this.filters.notifications) {
       params = {
@@ -469,6 +581,16 @@ export default class Appointment extends Conditional implements AppointmentResou
       }
     }
 
+    if (this.filters.skip_meeting_link_generation) {
+      params = {
+        ...params,
+        meta: {
+          ...params.meta,
+          skip_meeting_link_generation: this.filters.skip_meeting_link_generation,
+        }
+      }
+    }
+
     return params;
   }
 
@@ -494,6 +616,16 @@ export default class Appointment extends Conditional implements AppointmentResou
           notify: this.filters.notifications,
         },
       };
+    }
+
+    if (this.filters.skip_meeting_link_generation) {
+      params = {
+        ...params,
+        meta: {
+          ...params.meta,
+          skip_meeting_link_generation: this.filters.skip_meeting_link_generation,
+        }
+      }
     }
 
     return params;

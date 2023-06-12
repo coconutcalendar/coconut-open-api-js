@@ -47,6 +47,7 @@ export interface AttendeeParameters {
   notes?: string;
   phone?: string;
   postcode?: string;
+  recaptcha_token?: string | null;
   region?: string;
   responses?: ResponseModel[] | [];
   timezone?: string;

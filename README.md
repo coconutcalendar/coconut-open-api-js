@@ -58,7 +58,7 @@ class Answers {
 
 - `add(appointment: number)`
 
-Add the currently supplied attendees to the given appointment. _(not publicly available yet)_
+Add the currently supplied attendees to the given appointment.
 
 - `at(location: number)`
 
@@ -104,7 +104,7 @@ Set the timezone in which the server will interpret the appointment start time a
 
 Set a filter to use in order to find an existing appointment.
 
-- `method(method: number)` _(not publicly available yet)_
+- `method(method: number)`
 
 Set a filter which will tell the API to use the given meeting method when creating an appointment.
 
@@ -140,6 +140,10 @@ Set an attribute which will tell the API to use the given string as the term UTM
 
 Set an attribute which will tell the API to use the given origin constant as the booked through value when creating an appointment.
 
+- `uploads(uploadedFiles: UploadedFile[])`
+
+Attach uploaded files when creating an appointment.
+
 - `via(invitation: number)`
 
 Set an attribute which will tell the API to use the given invitation identifier when creating an appointment.
@@ -147,6 +151,22 @@ Set an attribute which will tell the API to use the given invitation identifier 
 - `with(attendees: AttendeeModel | AttendeeModel[])`
 
 Set a relationship which will tell the API to use the given attendee model(s) when creating a new appointment.
+
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to allow invite only location, service and user to be used when creating an appointment.
+
+- `withinUserCategory(userCategory: number)`
+
+Set a relationship which will tell the API to use the given user category identifier when creating an appointment.
+
+- `withoutMeetingLink(skipMeetingLinkGeneration?: boolean)`
+
+Set an attribute which will tell the API to skip the meeting link generation when creating an appointment.
+
+- `workflow(workflow: number)`
+
+Set a relationship which will tell the API to use the given workflow identifier when creating an appointment.
 
 ##### Example
 
@@ -160,8 +180,9 @@ class Appointments {
 
   async add(attributes) {
     const {
-      address, appointment, campaign, city, content, country, email, firstName, 
-      language, lastName, medium, notes, phone, question, source, term, value,
+      address, appointment, campaign, city, content, country, email, file,
+      firstName, key, language, lastName, medium, notes, phone, question,
+      source, term, value,
     } = attributes;
 
     const answer = (new Answer())
@@ -186,14 +207,17 @@ class Appointments {
       .term(term)
       .with(attendee)
       .through(Origins.MODERN_CLIENT_VIEW)
+      .uploads([{ key, file }])
       .notify(Notifications.ALL)
       .add(appointment);
   }
 
   async book(attributes) {
     const {
-      address, campaign, city, content, country, email, firstName, invitation, language, lastName,
-      location, locale, medium, notes, phone, question, service, source, start, term, timezone, user, users, value,
+      address, campaign, city, content, country, email, file, firstName, key, 
+      invitation, language, lastName, location, locale, medium, notes, phone, 
+      question, service, source, start, term, timezone, user, userCategory, 
+      users, value, workflow,
     } = attributes;
 
     const answer = (new Answer())
@@ -222,9 +246,14 @@ class Appointments {
       .source(source)
       .supporting(locale)
       .term(term)
+      .uploads([{ key, file }])
       .via(invitation)
       .with(attendee)
       .through(Origins.MODERN_CLIENT_VIEW)
+      .withInviteOnly()
+      .withinUserCategory(userCategory)
+      .withoutMeetingLink()
+      .workflow(workflow)
       .notify(Notifications.ALL)
       .book();
   }
@@ -249,11 +278,12 @@ class Appointments {
   async fetch({ code, id }) {
     return this.api.appointments().matching({ code, id }).get();
   }
-  
+
   async reschedule({ appointment, code, start }) {
       return this.api
         .appointments()
         .starting(start)
+        .withoutMeetingLink()
         .notify(Notifications.ALL)
         .reschedule(appointment, code);
     }
@@ -266,7 +296,7 @@ class Appointments {
 
 - `alias(alias: string | number)`
 
-Set the external identifier for the given attendee. _(not publicly available yet)_
+Set the external identifier for the given attendee.
 
 - `answers(answers: AnswerModel | AnswerModel[])`
 
@@ -274,7 +304,7 @@ Set a relationship which will tell the API to use the given answer model(s) for 
 
 - `as(identifier: number)`
 
-Set the identifier for a given attendee. _(not publicly available yet)_
+Set the identifier for a given attendee.
 
 - `located(details: LocatableDetailParameters)`
 
@@ -298,7 +328,7 @@ Set certain attributes on the attendee related to contact details such as cell p
 
 - `responses(answers: ResponseModel | ResponseModel[])`
 
-Set a relationship which will tell the API to use the given response model(s) for the attendee when cancelling an appointment. _(not publicly available yet)_
+Set a relationship which will tell the API to use the given response model(s) for the attendee when cancelling an appointment.
 
 - `speaks(language: string)`
 
@@ -337,23 +367,23 @@ class Attendees {
 
 - `cancellations()`
 
-Set a filter which will tell the API to return only cancellation forms. _(not publicly available yet)_
+Set a filter which will tell the API to return only cancellation forms.
 
 - `get()`
 
-Send the API request using the pre-set filters. _(not publicly available yet)_
+Send the API request using the pre-set filters.
 
 - `on(page: number)`
 
-Set the page offset which you want to view. _(not publicly available yet)_
+Set the page offset which you want to view.
 
 - `sortBy(sortable: string)`
 
-Set a sorting string to determine how the returned results are sorted. _(not publicly available yet)_
+Set a sorting string to determine how the returned results are sorted.
 
 - `take(limit: number)`
 
-Set the limit which you want returned. _(not publicly available yet)_
+Set the limit which you want returned.
 
 ##### Example
 
@@ -391,7 +421,7 @@ Set a filter which will tell the API to return locations where the supplied user
 
 - `details(identifier: string)`
 
-Retrieve a given location's details based on the given identifier. _(not publicly available yet)_
+Retrieve a given location's details based on the given identifier.
 
 - `get()`
 
@@ -411,7 +441,7 @@ Set the page offset which you want to view.
 
 - `physical()`
 
-Set a filter which will tell the API to return only non-virtual locations. _(not publicly available yet)_
+Set a filter which will tell the API to return only non-virtual locations.
 
 - `providing(services: number | number[] | string | string[])`
 
@@ -423,7 +453,7 @@ Set a sorting string to determine how the returned results are sorted.
 
 - `suggest(query: string)`
 
-Retrieve a set of location suggestions based on the given query. _(not publicly available yet)_
+Retrieve a set of location suggestions based on the given query.
 
 - `supporting(method: number)`
 
@@ -439,7 +469,15 @@ Set a filter which will tell the API which resource the request comes from. Curr
 
 - `virtual()`
 
-Set a filter which will tell the API to return only virtual locations. _(not publicly available yet)_
+Set a filter which will tell the API to return only virtual locations.
+
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to allow locations that are invite only or have invite only services or users assigned to them.
+
+- `withinUserCategory(userCategory: number | string)`
+
+Set a filter which will tell the API to return locations where users assigned to it are within the category matching the provided identifier.
 
 ##### Example
 
@@ -455,7 +493,7 @@ class Locations {
     return await this.api.details(identifier);
   }
 
-  async get({ page, limit, method, resource, services, sortable, user }) {
+  async get({ page, limit, method, resource, services, sortable, user, userCategory }) {
     return await this.api
       .locations()
       .assigned()
@@ -464,13 +502,15 @@ class Locations {
       .providing(services)
       .physical()
       .supporting(method)
+      .withInviteOnly()
+      .withinUserCategory(userCategory)
       .sortBy(sortable)
       .through(resource)
       .on(page)
       .take(limit)
       .get();
   }
-  
+
   async suggestions(query) {
     return await this.api.suggest(query);
   }
@@ -491,7 +531,7 @@ Set an attribute to say that the preference is for the next available opening.
 
 - `on(day: number)`
 
-Set the attribute to determine the preferred day of the wait list request preference and that it should only be for the certain supplied days. 
+Set the attribute to determine the preferred day of the wait list request preference and that it should only be for the certain supplied days.
 
 ##### Example
 
@@ -557,11 +597,11 @@ class Questions {
 
 - `for(question: number)`
 
-Set an attribute to determine the identifier of the question being answer. _(not publicly available yet)_
+Set an attribute to determine the identifier of the question being answer.
 
 - `is(value: string)`
 
-Set an attribute to determine the actual answer's value. _(not publicly available yet)_
+Set an attribute to determine the actual answer's value.
 
 ##### Example
 
@@ -605,7 +645,7 @@ Send the API request using the pre-set filters.
 
 - `group()`
 
-Set a filter which will tell the API to return only group type services. _(not publicly available yet)_
+Set a filter which will tell the API to return only group type services.
 
 - `in(category: number | string)`
 
@@ -613,7 +653,7 @@ Set a filter which will tell the API to return services that match the given cat
 
 - `individual()`
 
-Set a filter which will tell the API to return only individual type services. _(not publicly available yet)_
+Set a filter which will tell the API to return only individual type services.
 
 - `invitable()`
 
@@ -643,6 +683,18 @@ Set the limit which you want returned.
 
 Set a filter which will tell the API which resource the request comes from. Currently, only 'client_view' is supported.
 
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to allow services that are invite only or have invite only locations or users assigned to them.
+
+- `withinLocationCategory(locationCategory: number | string)`
+
+Set a filter which will tell the API to return users that are specifically for users within the location category matching the provided identifier.
+
+- `withinUserCategory(userCategory: number | string)`
+
+Set a filter which will tell the API to return services that are provided by user within the category matching the provided identifier.
+
 ##### Example
 
 ```javascript
@@ -653,7 +705,7 @@ class Services {
     this.api = new OpenApi();
   }
 
-  async get({ category, limit, location, method, page, region, resource, sortable, user }) {
+  async get({ category, limit, location, locationCategory, method, page, region, resource, sortable, user, userCategory }) {
     return await this.api
       .services()
       .assigned()
@@ -664,6 +716,9 @@ class Services {
       .located({ region })
       .supporting(method)
       .through(resource)
+      .withInviteOnly()
+      .withinLocationCategory(locationCategory)
+      .withinUserCategory(userCategory)
       .on(page)
       .sortBy(sortable)
       .take(limit)
@@ -718,7 +773,7 @@ Set a filter which will tell the API to return time slots that are specifically 
 
 - `excluding(exclusion: number)`
 
-Set a filter which will tell the API to exclude a particular appointment identifier when generating availability. _(not publicly available yet)_
+Set a filter which will tell the API to exclude a particular appointment identifier when generating availability.
 
 - `for(services: number | number[])`
 
@@ -728,17 +783,33 @@ Set a filter which will tell the API to return time slots that are specifically 
 
 Send the API request using the pre-set filters.
 
+- `google(token: string)`
+
+Set a filter which will tell the API to return time slots that are not conflicting with events associated with the Google access token.
+
 - `in(timezone: string)`
 
-Set a filter which will tell the API to return time slots in the given timezone. _(not publicly available yet)_
+Set a filter which will tell the API to return time slots in the given timezone.
 
 - `supporting(locales: string[])`
 
-Set a filter which will tell the API to return time slots for users that support the given locales. _(not publicly available yet)_
+Set a filter which will tell the API to return time slots for users that support the given locales.
 
 - `visibility(visibility: number)`
 
-Set a filter which will tell the API whether to return time slots belonging to all resources or just public resources. _(not publicly available yet)_
+Set a filter which will tell the API whether to return time slots belonging to all resources or just public resources.
+
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to return time slots belonging to public and invite only resources.
+
+- `withinLocationCategory(locationCategory: number | string)`
+
+Set a filter which will tell the API to return users that are specifically for users within the location category matching the provided identifier.
+
+- `withinUserCategory(userCategory: number)`
+
+Set a filter which will tell the API to return time slots that are specifically for users within the category matching the provided identifier.
 
 ##### Example
 
@@ -750,18 +821,22 @@ class TimeSlots {
     this.api = new OpenApi();
   }
 
-  async get({ appointment, end, location, service, start, user, users }) {
+  async get({ appointment, end, location, locationCategory, service, start, token, user, userCategory, users }) {
     return await this.api
       .slots()
       .at(location)
       .attendedBy(users)
       .by(user)
       .for(service)
+      .google(token)
       .between(start, end)
       .excluding(appointment)
       .in('America/Chicago')
       .supporting(['en', 'fr', 'es'])
       .visibility(Visibilities.ALL)
+      .withInviteOnly()
+      .withinLocationCategory(locationCategory)
+      .withinUserCategory(userCategory)
       .get()
   }
 }
@@ -815,6 +890,18 @@ Set the limit which you want returned.
 
 Set a filter which will tell the API which resource the request comes from. Currently, only 'client_view' is supported.
 
+- `withInviteOnly(inviteOnlyResources?: boolean)`
+
+Set an attribute which will tell the API to allow users that are invite only or have invite only locations or services assigned to them.
+
+- `withinLocationCategory(locationCategory?: number | string)`
+
+Set a filter which will tell the API to return users that are specifically for users within the location category matching the provided identifier.
+
+- `withinUserCategory(userCategory?: number | string)`
+
+Set a filter which will tell the API to return users that are specifically for users within the user category matching the provided identifier.
+
 ##### Example
 
 ```javascript
@@ -825,7 +912,7 @@ class Users {
     this.api = new OpenApi();
   }
 
-  async get({ limit, location, method, page, region, resource, services, sortable }) {
+  async get({ limit, location, locationCategory, method, page, region, resource, services, sortable, userCategory }) {
     return await this.api
       .users()
       .assigned()
@@ -834,6 +921,9 @@ class Users {
       .performing(services)
       .supporting(method)
       .through(resource)
+      .withInviteOnly()
+      .withinLocationCategory(locationCategory)
+      .withinUserCategory(userCategory)
       .on(page)
       .sortBy(sortable)
       .take(limit)
@@ -941,6 +1031,46 @@ class WaitLists {
       .prefers(preference)
       .provided(notes)
       .update(list);
+  }
+}
+```
+
+### Wait Times
+
+##### Methods
+
+- `at(location: number | string)`
+
+Set a relationship which will tell the API to use the given location identifier when fetching wait times.
+
+- `get()`
+
+Find wait times matching the pre-set matching parameters.
+
+- `on(page: number)`
+
+Set the page offset which you want to view.
+
+- `take(limit: number)`
+
+Set the limit which you want returned.
+
+##### Example
+
+```javascript
+import { OpenApi } from 'coconut-open-api-js';
+
+class WaitTimes {
+  constructor() {
+    this.api = new OpenApi();
+  }
+
+  async all() {
+    return this.api.waitTimes().get();
+  }
+
+  async find({ location }) {
+    return this.api.waitTimes().at(location).get();
   }
 }
 ```

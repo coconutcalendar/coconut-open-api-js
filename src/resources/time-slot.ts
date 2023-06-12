@@ -6,13 +6,17 @@ import Conditional, { ConditionalResource } from './conditional';
 export interface TimeSlotFilter {
   end?: string;
   exclusion?: number;
+  google?: string;
+  invite_only_resources?: boolean,
   location?: number;
+  location_category?: number | string;
   method?: number;
   services?: number | number[];
   start?: string;
   timezone?: string;
   locales?: string[];
   user?: number;
+  user_category?: number;
   users?: number | number[];
   visibility?: number;
 }
@@ -21,9 +25,13 @@ export interface TimeSlotParameters {
   additional_staff_id?: number | number[];
   end?: string;
   exclusion?: number;
+  google?: string;
+  invite_only_resources?: number,
   location_id?: number;
+  location_category_id?: number | string;
   meeting_method?: number;
   service_id?: number | number[];
+  staff_category_id?: number;
   staff_id?: number;
   start?: string;
   supported_locales?: string[];
@@ -44,6 +52,8 @@ export interface TimeSlotResource extends Resource, ConditionalResource {
 
   for(services: number | number[]): this;
 
+  google(token: string): this;
+
   in(timezone: string): this;
 
   method(method: number): this;
@@ -51,6 +61,12 @@ export interface TimeSlotResource extends Resource, ConditionalResource {
   supporting(locales: string[]): this;
 
   visibility(visibility: number): this;
+
+  withInviteOnly(inviteOnlyResources?: boolean): this;
+
+  withinLocationCategory(locationCategory: number | string): this;
+
+  withinUserCategory(userCategory: number | string): this;
 }
 
 export default class TimeSlot extends Conditional implements TimeSlotResource {
@@ -113,8 +129,20 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
       params.exclusion = this.filters.exclusion;
     }
 
+    if (this.filters.google) {
+      params.google = this.filters.google;
+    }
+
+    if (this.filters.invite_only_resources) {
+      params.invite_only_resources = Number(this.filters.invite_only_resources);
+    }
+
     if (this.filters.locales) {
       params.supported_locales = this.filters.locales;
+    }
+
+    if (this.filters.location_category) {
+      params.location_category_id = this.filters.location_category;
     }
 
     if (this.filters.method) {
@@ -129,6 +157,10 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
       params.staff_id = this.filters.user;
     }
 
+    if (this.filters.user_category) {
+      params.staff_category_id = this.filters.user_category;
+    }
+
     if (this.filters.users) {
       params.additional_staff_id = this.filters.users;
     }
@@ -138,6 +170,12 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
     }
 
     return await this.client.get('times', { params });
+  }
+
+  public google(token: string): this {
+    this.filters.google = token;
+
+    return this;
   }
 
   public in(timezone: string): this {
@@ -160,6 +198,24 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
 
   public visibility(visibility: number): this {
     this.filters.visibility = visibility;
+
+    return this;
+  }
+
+  public withInviteOnly(inviteOnlyResources: boolean = true): this {
+    this.filters.invite_only_resources = inviteOnlyResources;
+
+    return this;
+  }
+
+  public withinLocationCategory(locationCategory: number | string): this {
+    this.filters.location_category = locationCategory;
+
+    return this;
+  }
+
+  public withinUserCategory(userCategory: number): this {
+    this.filters.user_category = userCategory;
 
     return this;
   }

@@ -8,6 +8,14 @@ import Attendee from '../models/attendee';
 import Response from '../models/response';
 import Appointment, {AppointmentMatcherParameters, AppointmentNotificationParameters} from './appointment';
 
+it('can set the workflow property', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.workflow(12)).toHaveProperty('filters', {
+    workflow: 12,
+  });
+})
+
 it('can set the invitation property', async () => {
   const resource = new Appointment(mockAxios);
 
@@ -24,6 +32,22 @@ it('can set the booked through property', async () => {
   });
 })
 
+it('will set the invite only resources property to true by default', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withInviteOnly()).toHaveProperty('filters', {
+    invite_only_resources: true,
+  });
+});
+
+it('can set the invite only resources property to false', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withInviteOnly(false)).toHaveProperty('filters', {
+    invite_only_resources: false,
+  });
+});
+
 it('can set the location property', async () => {
   const resource = new Appointment(mockAxios);
 
@@ -37,6 +61,14 @@ it('can set the user property', async () => {
 
   expect(resource.by(1)).toHaveProperty('filters', {
     user: 1,
+  });
+});
+
+it('can set the user category property', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withinUserCategory(1)).toHaveProperty('filters', {
+    user_category: 1,
   });
 });
 
@@ -186,6 +218,22 @@ it('can set multiple attendees for the appointment', async () => {
   });
 });
 
+it('will set the skip meeting link generation property to true by default', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withoutMeetingLink()).toHaveProperty('filters', {
+    skip_meeting_link_generation: true,
+  });
+});
+
+it('can set the skip meeting link generation property to false', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.withoutMeetingLink(false)).toHaveProperty('filters', {
+    skip_meeting_link_generation: false,
+  });
+});
+
 it('can set an identifier for who we are acting as when booking the appointment', async () => {
   const resource = new Appointment(mockAxios);
 
@@ -263,6 +311,10 @@ it('can book an appointment with all available parameters', async () => {
       .source('test source')
       .term('test term')
       .actingAs(10)
+      .recaptcha('foo')
+      .withInviteOnly()
+      .withinUserCategory(1)
+      .withoutMeetingLink()
       .with(
         attendee
           .alias('ABC-123')
@@ -296,9 +348,12 @@ it('can book an appointment with all available parameters', async () => {
           booked_through: Origins.MODERN_CLIENT_VIEW,
           booking_shortcut_id: 6,
           invitation_id: 5,
+          invite_only_resources: 1,
           location_id: 1,
           meeting_method: PHONE_CALL,
+          recaptcha_token: 'foo',
           service_id: [2, 3],
+          staff_category_id: 1,
           staff_id: 4,
           start,
           supported_locale: 'fr',
@@ -349,6 +404,7 @@ it('can book an appointment with all available parameters', async () => {
       meta: {
         booker: 10,
         notify: notification,
+        skip_meeting_link_generation: true,
         utm: {
           campaign: 'test campaign',
           content: 'test content',
@@ -624,6 +680,7 @@ it('can reschedule an appointment with all available parameters', async () => {
       .starting(start)
       .in('America/Toronto')
       .notify(notification)
+      .withoutMeetingLink()
       .reschedule(1, 'code');
 
     expect(mockAxios.patch).toHaveBeenCalledWith('appointments/1?code=code', {
@@ -637,9 +694,96 @@ it('can reschedule an appointment with all available parameters', async () => {
       },
       meta: {
         notify: notification,
+        skip_meeting_link_generation: true,
       },
     });
   }
 
   expect(mockAxios.patch).toHaveBeenCalledTimes(3);
+});
+
+it('can book an appointment with a file upload', async () => {
+  const resource = new Appointment(mockAxios);
+  const start = '2022-06-20 12:00:00';
+  const attendee = new Attendee();
+  const uploadedFile = {
+    key: '0afbdaab-cdaa-44ae-b28b-110b1d77d9fa',
+    file: new File(['image'], 'image.png', { type: 'image/png' }),
+  };
+  const formData = new FormData();
+
+  formData.append('data', JSON.stringify({
+    data: {
+      relationships: {
+        attendees: {
+          data: [
+            {
+              type: 'attendees',
+              attributes: {
+                email: 'jane@doe.com',
+                first_name: 'Jane',
+                last_name: 'Doe',
+              },
+            },
+          ],
+        },
+      },
+      type: 'appointments',
+      attributes: {
+        invitation_id: null,
+        location_id: 1,
+        service_id: 2,
+        staff_id: null,
+        start,
+        supported_locale: null,
+      },
+    },
+  }));
+  formData.append(uploadedFile.key, uploadedFile.file);
+
+  await resource
+    .at(1)
+    .for(2)
+    .starting(start)
+    .with(attendee.named('Jane', 'Doe').reachable({ email: 'jane@doe.com' }))
+    .uploads([uploadedFile])
+    .book();
+
+  expect(mockAxios.post).toHaveBeenCalledTimes(1);
+  expect(mockAxios.post).toHaveBeenCalledWith('appointments', formData);
+});
+
+it('can add the given attendee to the given appointment with a file upload', async () => {
+  const resource = new Appointment(mockAxios);
+  const attendee = (new Attendee()).named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
+  const uploadedFile = {
+    key: '0afbdaab-cdaa-44ae-b28b-110b1d77d9fa',
+    file: new File(['image'], 'image.png', { type: 'image/png' }),
+  };
+  const formData = new FormData();
+
+  formData.append('contentType', 'application/json; ext=bulk');
+  formData.append('data', JSON.stringify({
+    data: [
+      {
+        type: 'attendees',
+        attributes: {
+          email: 'jane@doe.com',
+          first_name: 'Jane',
+          last_name: 'Doe',
+        },
+      }
+    ],
+    meta: {
+      booker: 10,
+    },
+  }));
+  formData.append(uploadedFile.key, uploadedFile.file);
+  formData.append('_method', 'PUT');
+
+  await resource.with(attendee).uploads([uploadedFile]).actingAs(10).add(1);
+
+  expect(mockAxios.put).toHaveBeenCalledTimes(0);
+  expect(mockAxios.post).toHaveBeenCalledTimes(1);
+  expect(mockAxios.post).toHaveBeenCalledWith('appointments/1/attendees', formData);
 });

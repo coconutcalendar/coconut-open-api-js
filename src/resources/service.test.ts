@@ -19,6 +19,22 @@ it('will set assigned filter to false', async () => {
   });
 });
 
+it('will set the invite only resources filter to true by default', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withInviteOnly()).toHaveProperty('filters', {
+    invite_only_resources: true,
+  });
+});
+
+it('can set the invite only resources filter to false', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withInviteOnly(false)).toHaveProperty('filters', {
+    invite_only_resources: false,
+  });
+});
+
 it('will set location filter using a number', async () => {
   const resource = new Service(mockAxios);
 
@@ -32,6 +48,22 @@ it('will set location filter using a string', async () => {
 
   expect(resource.at('identifier')).toHaveProperty('filters', {
     location: 'identifier',
+  });
+});
+
+it('will set location category filter using a string', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withinLocationCategory('identifier')).toHaveProperty('filters', {
+    location_category: 'identifier',
+  });
+});
+
+it('will set location category filter using a number', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withinLocationCategory(1)).toHaveProperty('filters', {
+    location_category: 1,
   });
 });
 
@@ -63,6 +95,22 @@ it('will set user filter using a string', async () => {
 
   expect(resource.by('identifier')).toHaveProperty('filters', {
     user: 'identifier',
+  });
+});
+
+it('will set user category filter using a number', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withinUserCategory(1)).toHaveProperty('filters', {
+    user_category: 1,
+  });
+});
+
+it('will set user category filter using a string', async () => {
+  const resource = new Service(mockAxios);
+
+  expect(resource.withinUserCategory('identifier')).toHaveProperty('filters', {
+    user_category: 'identifier',
   });
 });
 
@@ -155,6 +203,8 @@ it('can string all filterable options together', async () => {
       .preferred()
       .supporting(MeetingMethods.PHONE_CALL)
       .through('client_view')
+      .withInviteOnly()
+      .withinUserCategory(1)
       .sortBy('created')
       .take(5)
       .on(1),
@@ -165,12 +215,14 @@ it('can string all filterable options together', async () => {
     category: 3,
     group: 0,
     invitable: 1,
+    invite_only_resources: true,
     location: 1,
     method: MeetingMethods.PHONE_CALL,
     preferred: 1,
     region: 'SK',
     resource: 'client_view',
     user: 2,
+    user_category: 1,
   });
   expected.toHaveProperty('sortable', 'created');
   expected.toHaveProperty('limit', 5);
@@ -200,6 +252,8 @@ it('can get services with additional parameters', async () => {
     .preferred()
     .supporting(MeetingMethods.PHONE_CALL)
     .through('client_view')
+    .withInviteOnly()
+    .withinUserCategory(1)
     .sortBy('created')
     .take(5)
     .on(1)
@@ -213,11 +267,13 @@ it('can get services with additional parameters', async () => {
       'filter[client_view_meeting_method]': MeetingMethods.PHONE_CALL,
       'filter[group]': 0,
       'filter[invite_only]': 1,
+      'filter[invite_only_resources]': 1,
       'filter[location]': 1,
       'filter[preferred]': 1,
       'filter[province]': 'SK',
       'filter[resource]': 'client_view',
       'filter[user]': 2,
+      'filter[user_category]': 1,
       limit: 5,
       page: 1,
       sort: 'created',

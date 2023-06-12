@@ -14,22 +14,28 @@ export interface LocatableUserParameters {
 export interface UserFilter {
   [key: string]: any;
   assigned?: boolean;
-  services?: number | number[] | string | string[];
+  category?: number | string;
+  invite_only_resources?: boolean,
   location?: number | string;
-  resource?: string;
-  user?: number | string;
+  location_category?: number | string;
   method?: number;
+  resource?: string;
+  services?: number | number[] | string | string[];
+  user?: number | string;
 }
 
 export interface UserParameters {
   assignments?: boolean;
+  category?: number | string;
   client_view_meeting_method?: number;
-  service?: number | number[] | string | string[];
+  invite_only_resources?: number,
   location?: number | string;
+  location_category?: number | string;
+  meeting_method?: number;
   province?: string;
   resource?: string;
+  service?: number | number[] | string | string[];
   user?: number | string;
-  meeting_method?: number;
 }
 
 export interface UserResource extends Pageable, ConditionalResource {
@@ -46,6 +52,12 @@ export interface UserResource extends Pageable, ConditionalResource {
   supporting(method: number): this;
 
   through(resource: string): this;
+
+  withInviteOnly(inviteOnlyResources?: boolean): this;
+  
+  withinLocationCategory(locationCategory?: number | string): this;
+
+  withinUserCategory(category?: number | string): this;
 }
 
 export default class User extends Conditional implements UserResource {
@@ -152,23 +164,45 @@ export default class User extends Conditional implements UserResource {
     return this;
   }
 
+  public withInviteOnly(inviteOnlyResources: boolean = true): this {
+    this.filters.invite_only_resources = inviteOnlyResources;
+
+    return this;
+  }
+
+  public withinLocationCategory(locationCategory: number | string): this {
+    this.filters.location_category = locationCategory;
+
+    return this;
+  }
+
+  public withinUserCategory(category: number | string): this {
+    this.filters.category = category;
+
+    return this;
+  }
+
   protected params(): UserParameters {
     const params: UserParameters = {};
 
     if (typeof this.filters.assigned !== 'undefined') {
       params.assignments = this.filters.assigned;
     }
+    
+    if (typeof this.filters.category !== 'undefined') {
+      params.category = this.filters.category;
+    }
 
-    if (typeof this.filters.services !== 'undefined') {
-      params.service = this.filters.services;
+    if (this.filters.invite_only_resources) {
+      params.invite_only_resources = Number(this.filters.invite_only_resources);
     }
 
     if (typeof this.filters.location !== 'undefined') {
       params.location = this.filters.location;
     }
 
-    if (typeof this.filters.region !== 'undefined') {
-      params.province = this.filters.region;
+    if (typeof this.filters.location_category !== 'undefined') {
+      params.location_category = this.filters.location_category;
     }
 
     if (typeof this.filters.method !== 'undefined') {
@@ -176,8 +210,16 @@ export default class User extends Conditional implements UserResource {
       params.meeting_method = this.filters.method;
     }
 
+    if (typeof this.filters.region !== 'undefined') {
+      params.province = this.filters.region;
+    }
+
     if (typeof this.filters.resource !== 'undefined') {
       params.resource = this.filters.resource;
+    }
+
+    if (typeof this.filters.services !== 'undefined') {
+      params.service = this.filters.services;
     }
 
     if (typeof this.filters.user !== 'undefined') {

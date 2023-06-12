@@ -2,6 +2,55 @@
 
 ## [Unreleased]
 
+## [0.12.14] - 2022-07-07
+
+- Added recaptcha token as an optional parameter [#48](https://github.com/coconutcalendar/coconut-open-api-js/pull/48)
+
+## [0.12.13] - 2022-06-21
+
+- Added uploads method to let users attach files to the appointment booking and attendee add [#47](https://github.com/coconutcalendar/coconut-open-api-js/pull/47)
+
+## [0.12.12] - 2022-03-30
+
+- Releases new appointment filter [`69d0cc670a`](https://github.com/coconutcalendar/coconut-open-api-js/commit/69d0cc670a)
+
+## [0.12.11] - 2022-03-22
+
+- Add user category filter in user resources [#43](https://github.com/coconutcalendar/coconut-open-api-js/pull/43)
+
+## [0.12.10] - 2022-01-22
+
+- Add location category filter [#39](https://github.com/coconutcalendar/coconut-open-api-js/pull/39)
+
+## [0.12.9] - 2021-12-09
+
+- Add google filter for time-slots [#38](https://github.com/coconutcalendar/coconut-open-api-js/pull/38)
+
+## [0.12.8] - 2021-11-03
+
+- Adds user category filter [#37](https://github.com/coconutcalendar/coconut-open-api-js/pull/37)
+
+## [0.12.7] - 2021-10-25
+
+- Add skip meeting link generation for appointments [#36](https://github.com/coconutcalendar/coconut-open-api-js/pull/36)
+
+## [0.12.6] - 2021-10-14
+
+- Add invite only resources filter [#35](https://github.com/coconutcalendar/coconut-open-api-js/pull/35)
+
+## [0.12.5] - 2021-09-13
+
+- Reorganizes methods and properties to be alphabetical [`52378a899f`](https://github.com/coconutcalendar/coconut-open-api-js/commit/52378a899f)
+- Removes unnecessary/outdated warnings [`b210601d40`](https://github.com/coconutcalendar/coconut-open-api-js/commit/b210601d40)
+- Adds documentation for new wait time resource [`6001b86055`](https://github.com/coconutcalendar/coconut-open-api-js/commit/6001b86055)
+- Applies code linting fixes [`92e78b9fa1`](https://github.com/coconutcalendar/coconut-open-api-js/commit/92e78b9fa1)
+- Removes end slash when not getting wait times for a specific location [`2d2cc5c0ed`](https://github.com/coconutcalendar/coconut-open-api-js/commit/2d2cc5c0ed)
+- Adds new wait time resource [`c6e293b9dc`](https://github.com/coconutcalendar/coconut-open-api-js/pull/30)
+
+## [0.12.4] - 2021-06-01
+
+- Adds ability to supply booking shortcut id to a booking [`d5cd4c9440`](https://github.com/coconutcalendar/coconut-open-api-js/commit/d5cd4c9440)
+
 ## [0.12.3] - 2020-11-26
 
 - Updates documentation for sending booked through value when adding an attendee to an appointment [`d80b13d353`](https://github.com/coconutcalendar/coconut-open-api-js/commit/d80b13d353)
@@ -404,7 +453,18 @@
 - Removes mocked call chain [`3c253abd0a`](https://github.com/coconutcalendar/coconut-open-api-js/commit/3c253abd0a)
 - Removes ill-thought out version option [`d159644516`](https://github.com/coconutcalendar/coconut-open-api-js/commit/d159644516)
 
-[Unreleased]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.3...HEAD
+[Unreleased]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.14...HEAD
+[0.12.14]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.13...v0.12.14
+[0.12.13]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.12...v0.12.13
+[0.12.12]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.11...v0.12.12
+[0.12.11]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.10...v0.12.11
+[0.12.10]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.9...v0.12.10
+[0.12.9]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.8...v0.12.9
+[0.12.8]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.7...v0.12.8
+[0.12.7]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.6...v0.12.7
+[0.12.6]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.5...v0.12.6
+[0.12.5]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.4...v0.12.5
+[0.12.4]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.3...v0.12.4
 [0.12.3]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.2...v0.12.3
 [0.12.2]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.1...v0.12.2
 [0.12.1]: https://github.com/coconutcalendar/coconut-open-api-js/compare/v0.12.0...v0.12.1

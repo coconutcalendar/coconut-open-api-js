@@ -5,11 +5,43 @@ import Visibilities from "../constants/visibilities";
 
 import TimeSlot from './time-slot';
 
+it('will set the invite only resources filter to true by default', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.withInviteOnly()).toHaveProperty('filters', {
+    invite_only_resources: true,
+  });
+});
+
+it('can set the invite only resources filter to false', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.withInviteOnly(false)).toHaveProperty('filters', {
+    invite_only_resources: false,
+  });
+});
+
 it('will set location filter using a number', async () => {
   const resource = new TimeSlot(mockAxios);
 
   expect(resource.at(1)).toHaveProperty('filters', {
     location: 1,
+  });
+});
+
+it('will set location category filter using a number', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.withinLocationCategory(1)).toHaveProperty('filters', {
+    location_category: 1,
+  });
+});
+
+it('will set location category filter using a string', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.withinLocationCategory('identifier')).toHaveProperty('filters', {
+    location_category: 'identifier',
   });
 });
 
@@ -27,6 +59,14 @@ it('will set user filter using a number', async () => {
 
   expect(resource.by(1)).toHaveProperty('filters', {
     user: 1,
+  });
+});
+
+it('will set user category filter using a number', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.withinUserCategory(1)).toHaveProperty('filters', {
+    user_category: 1,
   });
 });
 
@@ -107,6 +147,14 @@ it('will set a visibility filter', async () => {
   });
 });
 
+it('will set a google token filter', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.google('token')).toHaveProperty('filters', {
+    google: 'token',
+  });
+});
+
 it('can string all filterable options together', async () => {
   const resource = new TimeSlot(mockAxios);
 
@@ -120,18 +168,22 @@ it('can string all filterable options together', async () => {
       .method(MeetingMethods.AT_LOCATION)
       .excluding(1)
       .supporting(['en'])
-      .visibility(Visibilities.ALL),
+      .visibility(Visibilities.ALL)
+      .withInviteOnly()
+      .withinUserCategory(1),
   );
 
   expected.toHaveProperty('filters', {
     end: '2018-01-31',
     exclusion: 1,
+    invite_only_resources: true,
     locales: ['en'],
     location: 1,
     method: MeetingMethods.AT_LOCATION,
     services: [1, 2],
     start: '2018-01-01',
     user: 1,
+    user_category: 1,
     users: [1, 2],
     visibility: Visibilities.ALL,
   });
@@ -151,6 +203,7 @@ it('can get time slots for no particular user', async () => {
     .in(timezone)
     .excluding(1)
     .visibility(Visibilities.ALL)
+    .withInviteOnly()
     .get();
 
   expect(mockAxios.get).toHaveBeenCalledTimes(1);
@@ -158,6 +211,7 @@ it('can get time slots for no particular user', async () => {
     params: {
       end: '2018-01-31',
       exclusion: 1,
+      invite_only_resources: 1,
       location_id: 1,
       service_id: [1, 2],
       start: '2018-01-01',
@@ -191,6 +245,37 @@ it('can get time slots for a specified user', async () => {
       location_id: 1,
       service_id: [1, 2],
       staff_id: 1,
+      start: '2018-01-01',
+      supported_locales: ['en', 'es'],
+      timezone,
+      visibility: Visibilities.ALL,
+    },
+  });
+});
+
+it('can get time slots for a specified user category', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  const timezones = ['America/Chicago', 'America/Toronto', 'Europe/Amsterdam', 'Europe/Paris'];
+  const timezone = timezones[Math.floor(Math.random() * timezones.length)];
+
+  await resource
+    .between('2018-01-01', '2018-01-31')
+    .at(1)
+    .for([1, 2])
+    .supporting(['en', 'es'])
+    .withinUserCategory(1)
+    .in(timezone)
+    .visibility(Visibilities.ALL)
+    .get();
+
+  expect(mockAxios.get).toHaveBeenCalledTimes(1);
+  expect(mockAxios.get).toHaveBeenCalledWith('times', {
+    params: {
+      end: '2018-01-31',
+      location_id: 1,
+      service_id: [1, 2],
+      staff_category_id: 1,
       start: '2018-01-01',
       supported_locales: ['en', 'es'],
       timezone,

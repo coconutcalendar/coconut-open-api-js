@@ -19,6 +19,22 @@ it('will set assigned filter to false', async () => {
   });
 });
 
+it('will set the invite only resources filter to true by default', async () => {
+  const resource = new User(mockAxios);
+
+  expect(resource.withInviteOnly()).toHaveProperty('filters', {
+    invite_only_resources: true,
+  });
+});
+
+it('can set the invite only resources filter to false', async () => {
+  const resource = new User(mockAxios);
+
+  expect(resource.withInviteOnly(false)).toHaveProperty('filters', {
+    invite_only_resources: false,
+  });
+});
+
 it('will set location filter using a number', async () => {
   const resource = new User(mockAxios);
 
@@ -34,6 +50,23 @@ it('will set location filter using a string', async () => {
     location: 'identifier',
   });
 });
+
+it('will set location category filter using a number', async () => {
+  const resource = new User(mockAxios);
+
+  expect(resource.withinLocationCategory(1)).toHaveProperty('filters', {
+    location_category: 1,
+  });
+});
+
+it('will set location category filter using a string', async () => {
+  const resource = new User(mockAxios);
+
+  expect(resource.withinLocationCategory('identifier')).toHaveProperty('filters', {
+    location_category: 'identifier',
+  });
+});
+
 
 it('will set the locatable filters as supplied', async () => {
   const resource = new User(mockAxios);
@@ -63,6 +96,22 @@ it('will set user filter using a number', async () => {
 
   expect(resource.find(1)).toHaveProperty('filters', {
     user: 1,
+  });
+});
+
+it('will set user category filter using a string', async () => {
+  const resource = new User(mockAxios);
+
+  expect(resource.withinUserCategory('1')).toHaveProperty('filters', {
+    category: '1',
+  });
+});
+
+it('will set user category filter using a number', async () => {
+  const resource = new User(mockAxios);
+
+  expect(resource.withinUserCategory(1)).toHaveProperty('filters', {
+    category: 1,
   });
 });
 
@@ -135,6 +184,8 @@ it('can string all filterable options together', async () => {
       .performing([1, 2])
       .supporting(MeetingMethods.PHONE_CALL)
       .through('client_view')
+      .withInviteOnly()
+      .withinLocationCategory(1)
       .sortBy('created')
       .find(1)
       .take(5)
@@ -143,7 +194,9 @@ it('can string all filterable options together', async () => {
 
   expected.toHaveProperty('filters', {
     assigned: true,
+    invite_only_resources: true,
     location: 1,
+    location_category: 1,
     method: MeetingMethods.PHONE_CALL,
     region: 'SK',
     resource: 'client_view',
@@ -174,6 +227,8 @@ it('can get users with additional parameters', async () => {
     .performing([1, 2])
     .supporting(MeetingMethods.PHONE_CALL)
     .through('client_view')
+    .withInviteOnly()
+    .withinLocationCategory(1)
     .find(1)
     .sortBy('created')
     .take(5)
@@ -185,7 +240,9 @@ it('can get users with additional parameters', async () => {
     params: {
       'filter[assignments]': true,
       'filter[client_view_meeting_method]': MeetingMethods.PHONE_CALL,
+      'filter[invite_only_resources]': 1,
       'filter[location]': 1,
+      'filter[location_category]': 1,
       'filter[meeting_method]': MeetingMethods.PHONE_CALL,
       'filter[province]': 'SK',
       'filter[resource]': 'client_view',
