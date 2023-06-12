@@ -11,6 +11,7 @@ import Attendee from './models/attendee';
 import Preference from './models/preference';
 import Response from './models/response';
 import Appointment, { AppointmentResource } from './resources/appointment';
+import QueueAppointment, { QueueAppointmentResource } from './resources/queue-appointment';
 import Form, { FormResource } from './resources/form';
 import Location, { LocationResource } from './resources/location';
 import Question, { QuestionResource } from './resources/question';
@@ -54,6 +55,7 @@ export { Answer, Attendee, Days, MeetingMethods, Notifications, Origins, Prefere
 
 export class OpenApi {
   protected appointment: AppointmentResource;
+  protected queueAppointment: QueueAppointmentResource;
   protected form: FormResource;
   protected client: AxiosInstance;
   protected domain?: string;
@@ -70,6 +72,7 @@ export class OpenApi {
     this.client = Client(domain);
     this.domain = domain;
     this.appointment = new Appointment(this.client);
+    this.queueAppointment = new QueueAppointment(this.client);
     this.form = new Form(this.client);
     this.list = new WaitList(this.client);
     this.location = new Location(this.client);
@@ -83,6 +86,10 @@ export class OpenApi {
 
   public appointments(): AppointmentResource {
     return this.appointment;
+  }
+
+  public queueAppointments(): QueueAppointmentResource {
+    return this.queueAppointment;
   }
 
   public forms(): FormResource {
