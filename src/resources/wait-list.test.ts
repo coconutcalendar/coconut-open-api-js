@@ -339,13 +339,10 @@ it('can delete a clients wait list request', async () => {
   expect(mockAxios.delete).toHaveBeenCalledWith('clients/1/requests/2');
 });
 
-
 it('can conditionally set a filter', async () => {
   const resource = new WaitList(mockAxios);
 
-  const expected = expect(
-    resource.when(true, (list: WaitList) => list.at(1)),
-  );
+  const expected = expect(resource.when(true, (list: WaitList) => list.at(1)));
 
   expected.toHaveProperty('relationships', {
     location: 1,
@@ -355,9 +352,7 @@ it('can conditionally set a filter', async () => {
 it('can conditionally not set a filter', async () => {
   const resource = new WaitList(mockAxios);
 
-  const expected = expect(
-    resource.when(false, (list: WaitList) => list.at(1)),
-  );
+  const expected = expect(resource.when(false, (list: WaitList) => list.at(1)));
 
   expected.toHaveProperty('relationships', {});
 });

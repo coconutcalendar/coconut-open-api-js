@@ -17,7 +17,7 @@ export interface ServiceFilter {
   category?: number | string;
   group?: number;
   invitable?: number;
-  invite_only_resources?: boolean,
+  invite_only_resources?: boolean;
   location?: number | string;
   location_category?: number | string;
   method?: number;
@@ -33,7 +33,7 @@ export interface ServiceParameters {
   client_view_meeting_method?: number;
   group?: number;
   invite_only?: number;
-  invite_only_resources?: number,
+  invite_only_resources?: number;
   location?: number | string;
   location_category?: number | string;
   preferred?: number;

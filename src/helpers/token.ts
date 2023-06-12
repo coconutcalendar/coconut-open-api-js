@@ -13,7 +13,7 @@ export function retrieve() {
     return token;
   }
 
-  sessionStorage.setItem(STORAGE_KEY, token = uuid());
+  sessionStorage.setItem(STORAGE_KEY, (token = uuid()));
 
   return token;
 }

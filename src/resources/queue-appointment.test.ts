@@ -1,7 +1,7 @@
 import mockAxios from 'axios';
 
-import MeetingMethods from "../constants/meeting-methods";
-import Origins from "../constants/origins";
+import MeetingMethods from '../constants/meeting-methods';
+import Origins from '../constants/origins';
 import Answer from '../models/answer';
 import Client from '../models/client';
 import QueueAppointment from './queue-appointment';
@@ -12,7 +12,7 @@ it('can set the workflow property', async () => {
   expect(resource.workflow(12)).toHaveProperty('filters', {
     workflow: 12,
   });
-})
+});
 
 it('can set the booked through property', async () => {
   const resource = new QueueAppointment(mockAxios);
@@ -20,7 +20,7 @@ it('can set the booked through property', async () => {
   expect(resource.through(Origins.API)).toHaveProperty('filters', {
     through: Origins.API,
   });
-})
+});
 
 it('can set the meeting method property', async () => {
   const resource = new QueueAppointment(mockAxios);
@@ -38,7 +38,6 @@ it('can set the location property', async () => {
     location: 1,
   });
 });
-
 
 it('can set the service property using a single number', async () => {
   const resource = new QueueAppointment(mockAxios);
@@ -95,7 +94,7 @@ it('can set a client for the queue appointment', async () => {
   expect(resource.with(client)).toHaveProperty('relationships', {
     client: {
       data: client,
-    }
+    },
   });
 });
 
@@ -172,11 +171,11 @@ it('can book a queue appointment with all available parameters', async () => {
         workflow_id: 12,
         notes: 'notes',
         booked_through: Origins.MODERN_CLIENT_VIEW,
-        campaign: "test campaign",
-        content: "test content",
-        medium: "test medium",
-        source: "test source",
-        term: "test term",
+        campaign: 'test campaign',
+        content: 'test content',
+        medium: 'test medium',
+        source: 'test source',
+        term: 'test term',
       },
       relationships: {
         client: {
@@ -185,21 +184,23 @@ it('can book a queue appointment with all available parameters', async () => {
             attributes: {
               first_name: 'Jane',
               last_name: 'Doe',
-              cell_phone: "1-555-555-5555",
-              email: "test@example.com",
-              lang: "fr",
-              notes: "testing notes",
+              cell_phone: '1-555-555-5555',
+              email: 'test@example.com',
+              lang: 'fr',
+              notes: 'testing notes',
             },
             type: 'client',
             relationships: {
               answers: {
-                data: [{
-                  attributes: {
-                    question_id: 1,
-                    value: "this answer",
+                data: [
+                  {
+                    attributes: {
+                      question_id: 1,
+                      value: 'this answer',
+                    },
+                    type: 'answers',
                   },
-                  type: "answers",
-                }],
+                ],
               },
             },
           },
@@ -213,9 +214,7 @@ it('can book a queue appointment with all available parameters', async () => {
 it('can conditionally set a filter', async () => {
   const resource = new QueueAppointment(mockAxios);
 
-  const expected = expect(
-    resource.when(true, (queueAppointment: QueueAppointment) => queueAppointment.for(1)),
-  );
+  const expected = expect(resource.when(true, (queueAppointment: QueueAppointment) => queueAppointment.for(1)));
 
   expected.toHaveProperty('filters', {
     service: 1,
@@ -225,9 +224,7 @@ it('can conditionally set a filter', async () => {
 it('can conditionally not set a filter', async () => {
   const resource = new QueueAppointment(mockAxios);
 
-  const expected = expect(
-    resource.when(false, (queueAppointment: QueueAppointment) => queueAppointment.for(1)),
-  );
+  const expected = expect(resource.when(false, (queueAppointment: QueueAppointment) => queueAppointment.for(1)));
 
   expected.toHaveProperty('filters', {});
 });

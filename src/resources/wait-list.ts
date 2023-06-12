@@ -191,13 +191,12 @@ export default class WaitList extends Conditional implements WaitListResource {
           type: 'clients',
         },
       };
-
     }
     if (this.relationships.location) {
       params.data.relationships.location = {
         data: {
           id: String(this.relationships.location),
-            type: 'locations',
+          type: 'locations',
         },
       };
     }
@@ -218,7 +217,7 @@ export default class WaitList extends Conditional implements WaitListResource {
       params.data.relationships.service = {
         data: {
           id: String(this.relationships.service),
-            type: 'services',
+          type: 'services',
         },
       };
     }

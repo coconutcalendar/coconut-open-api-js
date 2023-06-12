@@ -2,10 +2,10 @@ import { AxiosInstance } from 'axios';
 
 import { default as AxiosClient } from './client';
 import Days from './constants/days';
-import MeetingMethods from "./constants/meeting-methods";
+import MeetingMethods from './constants/meeting-methods';
 import Notifications from './constants/notifications';
 import Origins from './constants/origins';
-import Visibilities from "./constants/visibilities";
+import Visibilities from './constants/visibilities';
 import Answer from './models/answer';
 import Attendee from './models/attendee';
 import Client from './models/client';

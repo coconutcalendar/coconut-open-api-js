@@ -26,10 +26,10 @@ export interface ClientAttributes {
 }
 
 export interface ClientParameters {
-  first_name: string | null,
-  last_name: string | null,
-  notes?: string,
-  lang?: string,
+  first_name: string | null;
+  last_name: string | null;
+  notes?: string;
+  lang?: string;
   cell_phone?: string;
   email: string | null;
   answers?: AnswerModel[] | [];

@@ -70,6 +70,6 @@ export default class Response extends Model implements ResponseModel {
     return {
       attributes,
       type: 'responses',
-    }
+    };
   }
 }

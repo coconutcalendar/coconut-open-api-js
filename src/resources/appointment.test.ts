@@ -1,12 +1,12 @@
 import mockAxios from 'axios';
 
-import MeetingMethods from "../constants/meeting-methods";
+import MeetingMethods from '../constants/meeting-methods';
 import Notifications from '../constants/notifications';
-import Origins from "../constants/origins";
+import Origins from '../constants/origins';
 import Answer from '../models/answer';
 import Attendee from '../models/attendee';
 import Response from '../models/response';
-import Appointment, {AppointmentMatcherParameters, AppointmentNotificationParameters} from './appointment';
+import Appointment, { AppointmentMatcherParameters, AppointmentNotificationParameters } from './appointment';
 
 it('can set the workflow property', async () => {
   const resource = new Appointment(mockAxios);
@@ -14,7 +14,7 @@ it('can set the workflow property', async () => {
   expect(resource.workflow(12)).toHaveProperty('filters', {
     workflow: 12,
   });
-})
+});
 
 it('can set the invitation property', async () => {
   const resource = new Appointment(mockAxios);
@@ -30,7 +30,7 @@ it('can set the booked through property', async () => {
   expect(resource.through(Origins.API)).toHaveProperty('filters', {
     through: Origins.API,
   });
-})
+});
 
 it('will set the invite only resources property to true by default', async () => {
   const resource = new Appointment(mockAxios);
@@ -338,8 +338,8 @@ it('can book an appointment with all available parameters', async () => {
           .speaks('es')
           .answers(answer.for(1).is('this answer')),
       )
-    .notify(notification)
-    .book();
+      .notify(notification)
+      .book();
 
     expect(mockAxios.post).toHaveBeenCalledWith('appointments', {
       data: {
@@ -421,131 +421,156 @@ it('can book an appointment with all available parameters', async () => {
 
 it('can add the given attendee to the given appointment', async () => {
   const resource = new Appointment(mockAxios);
-  const attendee = (new Attendee()).named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
+  const attendee = new Attendee().named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
 
-  await resource.with(attendee).actingAs(10).add(1);
+  await resource
+    .with(attendee)
+    .actingAs(10)
+    .add(1);
 
   expect(mockAxios.put).toHaveBeenCalledTimes(1);
-  expect(mockAxios.put).toHaveBeenCalledWith('appointments/1/attendees', {
-    data: [
-      {
-        attributes: {
-          email: 'jane@doe.com',
-          first_name: 'Jane',
-          last_name: 'Doe',
+  expect(mockAxios.put).toHaveBeenCalledWith(
+    'appointments/1/attendees',
+    {
+      data: [
+        {
+          attributes: {
+            email: 'jane@doe.com',
+            first_name: 'Jane',
+            last_name: 'Doe',
+          },
+          type: 'attendees',
         },
-        type: 'attendees',
-      }
-    ],
-    meta: {
-      booker: 10,
+      ],
+      meta: {
+        booker: 10,
+      },
     },
-  }, {
-    headers: {
-      'Content-Type': 'application/json; ext=bulk',
+    {
+      headers: {
+        'Content-Type': 'application/json; ext=bulk',
+      },
     },
-  });
+  );
 });
 
 it('can add the given attendee to the given appointment with notification meta data', async () => {
   const resource = new Appointment(mockAxios);
-  const attendee = (new Attendee()).named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
+  const attendee = new Attendee().named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
 
-  await resource.with(attendee).notify(Notifications.ALL).add(1);
+  await resource
+    .with(attendee)
+    .notify(Notifications.ALL)
+    .add(1);
 
   expect(mockAxios.put).toHaveBeenCalledTimes(1);
-  expect(mockAxios.put).toHaveBeenCalledWith('appointments/1/attendees', {
-    data: [
-      {
-        attributes: {
-          email: 'jane@doe.com',
-          first_name: 'Jane',
-          last_name: 'Doe',
+  expect(mockAxios.put).toHaveBeenCalledWith(
+    'appointments/1/attendees',
+    {
+      data: [
+        {
+          attributes: {
+            email: 'jane@doe.com',
+            first_name: 'Jane',
+            last_name: 'Doe',
+          },
+          type: 'attendees',
         },
-        type: 'attendees',
-      }
-    ],
-    meta: {
-      notify: {
-        client: true,
-        user: true,
+      ],
+      meta: {
+        notify: {
+          client: true,
+          user: true,
+        },
       },
     },
-  }, {
-    headers: {
-      'Content-Type': 'application/json; ext=bulk',
+    {
+      headers: {
+        'Content-Type': 'application/json; ext=bulk',
+      },
     },
-  });
+  );
 });
 
 it('can add the given attendee to the given appointment with booked through meta data', async () => {
   const resource = new Appointment(mockAxios);
-  const attendee = (new Attendee()).named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
+  const attendee = new Attendee().named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
 
-  await resource.with(attendee).through(Origins.MODERN_CLIENT_VIEW).add(1);
+  await resource
+    .with(attendee)
+    .through(Origins.MODERN_CLIENT_VIEW)
+    .add(1);
 
   expect(mockAxios.put).toHaveBeenCalledTimes(1);
-  expect(mockAxios.put).toHaveBeenCalledWith('appointments/1/attendees', {
-    data: [
-      {
-        attributes: {
-          email: 'jane@doe.com',
-          first_name: 'Jane',
-          last_name: 'Doe',
+  expect(mockAxios.put).toHaveBeenCalledWith(
+    'appointments/1/attendees',
+    {
+      data: [
+        {
+          attributes: {
+            email: 'jane@doe.com',
+            first_name: 'Jane',
+            last_name: 'Doe',
+          },
+          type: 'attendees',
         },
-        type: 'attendees',
-      }
-    ],
-    meta: {
-      origin: Origins.MODERN_CLIENT_VIEW,
+      ],
+      meta: {
+        origin: Origins.MODERN_CLIENT_VIEW,
+      },
     },
-  }, {
-    headers: {
-      'Content-Type': 'application/json; ext=bulk',
+    {
+      headers: {
+        'Content-Type': 'application/json; ext=bulk',
+      },
     },
-  });
+  );
 });
 
 it('can add the given attendee to the given appointment while supplying answers', async () => {
   const resource = new Appointment(mockAxios);
-  const answer = (new Answer()).for(1).is('the value');
-  const attendee = (new Attendee())
-      .named('Jane', 'Doe')
-      .reachable({ email: 'jane@doe.com' })
-      .answers(answer);
+  const answer = new Answer().for(1).is('the value');
+  const attendee = new Attendee()
+    .named('Jane', 'Doe')
+    .reachable({ email: 'jane@doe.com' })
+    .answers(answer);
 
   await resource.with(attendee).add(1);
 
   expect(mockAxios.put).toHaveBeenCalledTimes(1);
-  expect(mockAxios.put).toHaveBeenCalledWith('appointments/1/attendees', {
-    data: [
-      {
-        attributes: {
-          email: 'jane@doe.com',
-          first_name: 'Jane',
-          last_name: 'Doe',
-        },
-        relationships: {
-          answers: {
-            data: [
-              {
-                attributes: {
-                  question_id: 1,
-                  value: 'the value',
+  expect(mockAxios.put).toHaveBeenCalledWith(
+    'appointments/1/attendees',
+    {
+      data: [
+        {
+          attributes: {
+            email: 'jane@doe.com',
+            first_name: 'Jane',
+            last_name: 'Doe',
+          },
+          relationships: {
+            answers: {
+              data: [
+                {
+                  attributes: {
+                    question_id: 1,
+                    value: 'the value',
+                  },
+                  type: 'answers',
                 },
-                type: 'answers',
-              }
-            ]
-          }
+              ],
+            },
+          },
+          type: 'attendees',
         },
-        type: 'attendees'
-      }
-    ],
-  }, {
-    headers: {
-      'Content-Type': 'application/json; ext=bulk',
+      ],
     },
-  });
+    {
+      headers: {
+        'Content-Type': 'application/json; ext=bulk',
+      },
+    },
+  );
 });
 
 it('can retrieve matching appointments using a given set of matchers', async () => {
@@ -575,16 +600,9 @@ it('can cancel the given appointment for the given attendee', async () => {
 it('can cancel the given appointment for the given attendee while provided responses', async () => {
   const resource = new Appointment(mockAxios);
   const attendee = new Attendee();
-  const responses = [
-    (new Response()).for(1).is('the response'),
-    (new Response()).for(2).selected(1),
-  ];
+  const responses = [new Response().for(1).is('the response'), new Response().for(2).selected(1)];
 
-  await resource
-    .with(
-      attendee.as(2).responses(responses)
-    )
-    .cancel(1, 2, 'code');
+  await resource.with(attendee.as(2).responses(responses)).cancel(1, 2, 'code');
 
   expect(mockAxios.delete).toHaveBeenCalledWith('appointments/1/2', {
     data: {
@@ -611,13 +629,13 @@ it('can cancel the given appointment for the given attendee while provided respo
                         },
                         type: 'responses',
                       },
-                    ]
-                  }
+                    ],
+                  },
                 },
                 type: 'attendees',
-              }
-            ]
-          }
+              },
+            ],
+          },
         },
         type: 'appointments',
       },
@@ -631,9 +649,7 @@ it('can cancel the given appointment for the given attendee while provided respo
 it('can conditionally set a filter', async () => {
   const resource = new Appointment(mockAxios);
 
-  const expected = expect(
-    resource.when(true, (appointment: Appointment) => appointment.at(1)),
-  );
+  const expected = expect(resource.when(true, (appointment: Appointment) => appointment.at(1)));
 
   expected.toHaveProperty('filters', {
     location: 1,
@@ -643,9 +659,7 @@ it('can conditionally set a filter', async () => {
 it('can conditionally not set a filter', async () => {
   const resource = new Appointment(mockAxios);
 
-  const expected = expect(
-    resource.when(false, (appointment: Appointment) => appointment.at(1)),
-  );
+  const expected = expect(resource.when(false, (appointment: Appointment) => appointment.at(1)));
 
   expected.toHaveProperty('filters', {});
 });
@@ -654,9 +668,7 @@ it('can reschedule an appointment with the minimum required parameters', async (
   const resource = new Appointment(mockAxios);
   const start = '2018-01-01 12:00:00';
 
-  await resource
-    .starting(start)
-    .reschedule(1, 'code');
+  await resource.starting(start).reschedule(1, 'code');
 
   expect(mockAxios.patch).toHaveBeenCalledTimes(1);
   expect(mockAxios.patch).toHaveBeenCalledWith('appointments/1?code=code', {
@@ -666,7 +678,7 @@ it('can reschedule an appointment with the minimum required parameters', async (
       },
       id: 1,
       type: 'appointments',
-    }
+    },
   });
 });
 
@@ -712,33 +724,36 @@ it('can book an appointment with a file upload', async () => {
   };
   const formData = new FormData();
 
-  formData.append('data', JSON.stringify({
-    data: {
-      relationships: {
-        attendees: {
-          data: [
-            {
-              type: 'attendees',
-              attributes: {
-                email: 'jane@doe.com',
-                first_name: 'Jane',
-                last_name: 'Doe',
+  formData.append(
+    'data',
+    JSON.stringify({
+      data: {
+        relationships: {
+          attendees: {
+            data: [
+              {
+                type: 'attendees',
+                attributes: {
+                  email: 'jane@doe.com',
+                  first_name: 'Jane',
+                  last_name: 'Doe',
+                },
               },
-            },
-          ],
+            ],
+          },
+        },
+        type: 'appointments',
+        attributes: {
+          invitation_id: null,
+          location_id: 1,
+          service_id: 2,
+          staff_id: null,
+          start,
+          supported_locale: null,
         },
       },
-      type: 'appointments',
-      attributes: {
-        invitation_id: null,
-        location_id: 1,
-        service_id: 2,
-        staff_id: null,
-        start,
-        supported_locale: null,
-      },
-    },
-  }));
+    }),
+  );
   formData.append(uploadedFile.key, uploadedFile.file);
 
   await resource
@@ -755,7 +770,7 @@ it('can book an appointment with a file upload', async () => {
 
 it('can add the given attendee to the given appointment with a file upload', async () => {
   const resource = new Appointment(mockAxios);
-  const attendee = (new Attendee()).named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
+  const attendee = new Attendee().named('Jane', 'Doe').reachable({ email: 'jane@doe.com' });
   const uploadedFile = {
     key: '0afbdaab-cdaa-44ae-b28b-110b1d77d9fa',
     file: new File(['image'], 'image.png', { type: 'image/png' }),
@@ -763,25 +778,32 @@ it('can add the given attendee to the given appointment with a file upload', asy
   const formData = new FormData();
 
   formData.append('contentType', 'application/json; ext=bulk');
-  formData.append('data', JSON.stringify({
-    data: [
-      {
-        type: 'attendees',
-        attributes: {
-          email: 'jane@doe.com',
-          first_name: 'Jane',
-          last_name: 'Doe',
+  formData.append(
+    'data',
+    JSON.stringify({
+      data: [
+        {
+          type: 'attendees',
+          attributes: {
+            email: 'jane@doe.com',
+            first_name: 'Jane',
+            last_name: 'Doe',
+          },
         },
-      }
-    ],
-    meta: {
-      booker: 10,
-    },
-  }));
+      ],
+      meta: {
+        booker: 10,
+      },
+    }),
+  );
   formData.append(uploadedFile.key, uploadedFile.file);
   formData.append('_method', 'PUT');
 
-  await resource.with(attendee).uploads([uploadedFile]).actingAs(10).add(1);
+  await resource
+    .with(attendee)
+    .uploads([uploadedFile])
+    .actingAs(10)
+    .add(1);
 
   expect(mockAxios.put).toHaveBeenCalledTimes(0);
   expect(mockAxios.post).toHaveBeenCalledTimes(1);

@@ -7,7 +7,7 @@ export interface TimeSlotFilter {
   end?: string;
   exclusion?: number;
   google?: string;
-  invite_only_resources?: boolean,
+  invite_only_resources?: boolean;
   location?: number;
   location_category?: number | string;
   method?: number;
@@ -26,7 +26,7 @@ export interface TimeSlotParameters {
   end?: string;
   exclusion?: number;
   google?: string;
-  invite_only_resources?: number,
+  invite_only_resources?: number;
   location_id?: number;
   location_category_id?: number | string;
   meeting_method?: number;

@@ -23,25 +23,25 @@ export interface UtmParameters {
 export interface QueueAppointmentParameters {
   data: {
     attributes: {
-      booked_through?: number,
-      service_id?: number,
-      location_id?: number,
-      meeting_method?: number,
-      notes?: string,
-      workflow_id?: number,
-      campaign?: string,
-      content?: string,
-      source?: string,
-      medium?: string,
-      term?: string,
-    },
+      booked_through?: number;
+      service_id?: number;
+      location_id?: number;
+      meeting_method?: number;
+      notes?: string;
+      workflow_id?: number;
+      campaign?: string;
+      content?: string;
+      source?: string;
+      medium?: string;
+      term?: string;
+    };
     relationships: {
       client: {
-        data: object,
-      },
-    },
-    type: string,
-  },
+        data: object;
+      };
+    };
+    type: string;
+  };
 }
 
 export interface QueueAppointmentResource extends ConditionalResource {
@@ -76,8 +76,8 @@ export interface Utm {
 
 export interface QueueAppointmentRelationship {
   client: {
-    data: ClientModel | null
-  }
+    data: ClientModel | null;
+  };
 }
 
 export interface QueueAppointmentMeta {
@@ -100,7 +100,7 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     this.relationships = {
       client: {
         data: null,
-      }
+      },
     };
     this.utm = {};
   }
@@ -132,7 +132,7 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
   public through(origin: number): this {
     this.filters.through = origin;
 
-    return this
+    return this;
   }
 
   public with(client: ClientModel): this {
@@ -182,11 +182,7 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
   }
 
   protected hasUtm(): boolean {
-    return !!(this.utm.campaign)
-        || !!(this.utm.content)
-        || !!(this.utm.medium)
-        || !!(this.utm.source)
-        || !!(this.utm.term);
+    return !!this.utm.campaign || !!this.utm.content || !!this.utm.medium || !!this.utm.source || !!this.utm.term;
   }
 
   protected params(): QueueAppointmentParameters | object {
@@ -200,14 +196,14 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
           location_id: this.filters.location,
           meeting_method: this.filters.method,
           service_id: this.filters.service,
-          ...this.filters.workflow && {workflow_id: this.filters.workflow},
-          ...this.filters.notes && {notes: this.filters.notes},
-          ...this.filters.through && {booked_through: this.filters.through},
-          ...this.utm.campaign && {campaign: this.utm.campaign},
-          ...this.utm.content && {content: this.utm.content},
-          ...this.utm.medium && {medium: this.utm.medium},
-          ...this.utm.source && {source: this.utm.source},
-          ...this.utm.term && {term: this.utm.term},
+          ...(this.filters.workflow && { workflow_id: this.filters.workflow }),
+          ...(this.filters.notes && { notes: this.filters.notes }),
+          ...(this.filters.through && { booked_through: this.filters.through }),
+          ...(this.utm.campaign && { campaign: this.utm.campaign }),
+          ...(this.utm.content && { content: this.utm.content }),
+          ...(this.utm.medium && { medium: this.utm.medium }),
+          ...(this.utm.source && { source: this.utm.source }),
+          ...(this.utm.term && { term: this.utm.term }),
         },
         relationships: {
           client: {

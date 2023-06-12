@@ -20,7 +20,7 @@ it('can set an external identifier for the attendee', async () => {
       alias: 'ABC-123',
     }),
   );
-})
+});
 
 it('can set answers when providing a single answer', async () => {
   const answer = new Answer();

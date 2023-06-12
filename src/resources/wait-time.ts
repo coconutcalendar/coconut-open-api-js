@@ -9,9 +9,9 @@ export interface WaitTimeParameters {
 }
 
 export interface WaitTimeResource {
-    at(location: string | number): this;
-    on(page: number): this;
-    take(limit: number): this;
+  at(location: string | number): this;
+  on(page: number): this;
+  take(limit: number): this;
 }
 
 export default class WaitTime extends Conditional implements WaitTimeResource {

@@ -6,7 +6,7 @@ import Conditional, { ConditionalResource } from './conditional';
 
 export interface AppointmentFilter {
   invitation?: number;
-  invite_only_resources?: boolean,
+  invite_only_resources?: boolean;
   locale?: string | null;
   location?: number;
   matchers?: AppointmentMatcherParameters;
@@ -46,7 +46,7 @@ export interface AppointmentNotificationParameters {
 export interface AppointmentParameters {
   data: {
     attributes?: {
-      additional_staff_id?: number | number[],
+      additional_staff_id?: number | number[];
       booked_through?: number;
       booking_shortcut_id?: number;
       invitation_id: number | null;
@@ -122,7 +122,7 @@ export interface AddAttendeeParameters {
       user?: boolean;
     };
     origin?: number;
-  }
+  };
 }
 
 export interface AppointmentResource extends Resource, ConditionalResource {
@@ -244,7 +244,7 @@ export default class Appointment extends Conditional implements AppointmentResou
       });
 
       // method spoofing because PUT doesn't upload files
-      formData.append('_method', 'PUT')
+      formData.append('_method', 'PUT');
 
       return await this.client.post(`appointments/${appointment}/attendees`, formData);
     }
@@ -272,7 +272,7 @@ export default class Appointment extends Conditional implements AppointmentResou
     if (this.uploadedFiles.length > 0) {
       const formData = new FormData();
 
-      formData.append('data', JSON.stringify(this.params()));  
+      formData.append('data', JSON.stringify(this.params()));
 
       this.uploadedFiles.forEach((uploadedFile: UploadedFile) => {
         formData.append(uploadedFile.key, uploadedFile.file);
@@ -394,7 +394,7 @@ export default class Appointment extends Conditional implements AppointmentResou
   public through(origin: number): this {
     this.filters.through = origin;
 
-    return this
+    return this;
   }
 
   public uploads(uploadedFiles: UploadedFile[]): this {
@@ -454,7 +454,7 @@ export default class Appointment extends Conditional implements AppointmentResou
       params.meta = {
         ...params.meta,
         origin: this.filters.through,
-      }
+      };
     }
 
     if (this.filters.notifications) {
@@ -468,11 +468,7 @@ export default class Appointment extends Conditional implements AppointmentResou
   }
 
   protected hasUtm(): boolean {
-    return !!(this.utm.campaign)
-        || !!(this.utm.content)
-        || !!(this.utm.medium)
-        || !!(this.utm.source)
-        || !!(this.utm.term);
+    return !!this.utm.campaign || !!this.utm.content || !!this.utm.medium || !!this.utm.source || !!this.utm.term;
   }
 
   protected params(): AppointmentParameters | object {
@@ -561,11 +557,11 @@ export default class Appointment extends Conditional implements AppointmentResou
         meta: {
           ...params.meta,
           utm: {
-            ...this.utm.campaign && {campaign: this.utm.campaign},
-            ...this.utm.content && {content: this.utm.content},
-            ...this.utm.medium && {medium: this.utm.medium},
-            ...this.utm.source && {source: this.utm.source},
-            ...this.utm.term && {term: this.utm.term},
+            ...(this.utm.campaign && { campaign: this.utm.campaign }),
+            ...(this.utm.content && { content: this.utm.content }),
+            ...(this.utm.medium && { medium: this.utm.medium }),
+            ...(this.utm.source && { source: this.utm.source }),
+            ...(this.utm.term && { term: this.utm.term }),
           },
         },
       };
@@ -577,8 +573,8 @@ export default class Appointment extends Conditional implements AppointmentResou
         meta: {
           ...params.meta,
           booker: this.meta.booker,
-        }
-      }
+        },
+      };
     }
 
     if (this.filters.skip_meeting_link_generation) {
@@ -587,8 +583,8 @@ export default class Appointment extends Conditional implements AppointmentResou
         meta: {
           ...params.meta,
           skip_meeting_link_generation: this.filters.skip_meeting_link_generation,
-        }
-      }
+        },
+      };
     }
 
     return params;
@@ -624,8 +620,8 @@ export default class Appointment extends Conditional implements AppointmentResou
         meta: {
           ...params.meta,
           skip_meeting_link_generation: this.filters.skip_meeting_link_generation,
-        }
-      }
+        },
+      };
     }
 
     return params;
@@ -633,9 +629,9 @@ export default class Appointment extends Conditional implements AppointmentResou
 
   protected transformAttendees(): AddSingleAttendeeParameter[] {
     return (this.relationships.attendees as AttendeeModel[]).map(
-        (attendee: AttendeeModel): AddSingleAttendeeParameter => {
-          return (attendee.transform() as AddSingleAttendeeParameter);
-        }
+      (attendee: AttendeeModel): AddSingleAttendeeParameter => {
+        return attendee.transform() as AddSingleAttendeeParameter;
+      },
     );
   }
 }

@@ -1,7 +1,7 @@
 import mockAxios from 'axios';
-import MeetingMethods from "../constants/meeting-methods";
+import MeetingMethods from '../constants/meeting-methods';
 
-import Visibilities from "../constants/visibilities";
+import Visibilities from '../constants/visibilities';
 
 import TimeSlot from './time-slot';
 
@@ -287,9 +287,7 @@ it('can get time slots for a specified user category', async () => {
 it('can conditionally set a filter', async () => {
   const resource = new TimeSlot(mockAxios);
 
-  const expected = expect(
-    resource.when(true, (slot: TimeSlot) => slot.at(1)),
-  );
+  const expected = expect(resource.when(true, (slot: TimeSlot) => slot.at(1)));
 
   expected.toHaveProperty('filters', {
     location: 1,
@@ -299,9 +297,7 @@ it('can conditionally set a filter', async () => {
 it('can conditionally not set a filter', async () => {
   const resource = new TimeSlot(mockAxios);
 
-  const expected = expect(
-    resource.when(false, (slot: TimeSlot) => slot.at(1)),
-  );
+  const expected = expect(resource.when(false, (slot: TimeSlot) => slot.at(1)));
 
   expected.toHaveProperty('filters', {});
 });

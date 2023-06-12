@@ -1,7 +1,7 @@
 import mockAxios from 'axios';
 
 import User from './user';
-import MeetingMethods from "../constants/meeting-methods";
+import MeetingMethods from '../constants/meeting-methods';
 
 it('will set assigned filter', async () => {
   const resource = new User(mockAxios);
@@ -67,12 +67,11 @@ it('will set location category filter using a string', async () => {
   });
 });
 
-
 it('will set the locatable filters as supplied', async () => {
   const resource = new User(mockAxios);
   const region = 'SK';
 
-  expect(resource.located({ region })).toHaveProperty('filters', { region })
+  expect(resource.located({ region })).toHaveProperty('filters', { region });
 });
 
 it('will set meeting method filter using a number', async () => {
@@ -258,9 +257,7 @@ it('can get users with additional parameters', async () => {
 it('can conditionally set a filter', async () => {
   const resource = new User(mockAxios);
 
-  const expected = expect(
-    resource.when(true, (user: User) => user.assigned()),
-  );
+  const expected = expect(resource.when(true, (user: User) => user.assigned()));
 
   expected.toHaveProperty('filters', {
     assigned: true,
@@ -270,9 +267,7 @@ it('can conditionally set a filter', async () => {
 it('can conditionally not set a filter', async () => {
   const resource = new User(mockAxios);
 
-  const expected = expect(
-    resource.when(false, (user: User) => user.assigned()),
-  );
+  const expected = expect(resource.when(false, (user: User) => user.assigned()));
 
   expected.toHaveProperty('filters', {});
 });
