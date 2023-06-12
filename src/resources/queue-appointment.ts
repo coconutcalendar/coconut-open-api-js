@@ -8,7 +8,6 @@ export interface QueueAppointmentFilter {
   method?: number;
   service?: number;
   through?: number;
-  user?: number;
   notes?: string;
   workflow?: number;
 }
@@ -41,6 +40,7 @@ export interface QueueAppointmentParameters {
         data: object,
       },
     },
+    type: string,
   },
 }
 
@@ -49,9 +49,7 @@ export interface QueueAppointmentResource extends ConditionalResource {
 
   book(): Promise<any>;
 
-  by(user: number): this;
-
-  for(services: number | number[]): this;
+  for(service: number): this;
 
   method(method: number): this;
 
@@ -109,12 +107,6 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
 
   public at(location: number): this {
     this.filters.location = location;
-
-    return this;
-  }
-
-  public by(user: number): this {
-    this.filters.user = user;
 
     return this;
   }
@@ -205,18 +197,24 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     let params: QueueAppointmentParameters = {
       data: {
         attributes: {
-          booked_through: this.filters.through,
           service_id: this.filters.service,
           location_id: this.filters.location,
           meeting_method: this.filters.method,
-          notes: this.filters.notes,
-          workflow_id: this.filters.workflow,
+          ...this.filters.workflow && {workflow_id: this.filters.workflow},
+          ...this.filters.notes && {notes: this.filters.notes},
+          ...this.filters.through && {booked_through: this.filters.through},
+          ...this.utm.campaign && {campaign: this.utm.campaign},
+          ...this.utm.content && {content: this.utm.content},
+          ...this.utm.medium && {medium: this.utm.medium},
+          ...this.utm.source && {source: this.utm.source},
+          ...this.utm.term && {term: this.utm.term},
         },
         relationships: {
           client: {
             data: this.relationships.client.data.transform(),
           },
         },
+        type: 'queue-appointments',
       },
     };
 
@@ -226,17 +224,6 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
 
     if (this.filters.through) {
       params.data.attributes.booked_through = this.filters.through;
-    }
-
-    if (this.hasUtm()) {
-      params = {
-        ...params,
-        ...this.utm.campaign && {campaign: this.utm.campaign},
-        ...this.utm.content && {content: this.utm.content},
-        ...this.utm.medium && {medium: this.utm.medium},
-        ...this.utm.source && {source: this.utm.source},
-        ...this.utm.term && {term: this.utm.term},
-      };
     }
 
     return params;
