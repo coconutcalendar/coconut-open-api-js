@@ -361,6 +361,154 @@ class Attendees {
 }
 ```
 
+### Queue Appointments
+
+##### Methods
+
+- `at(location: number)`
+
+Set a relationship which will tell the API to use the given location identifier when creating a queue appointment.
+
+- `book()`
+
+Create a new queue appointment using the pre-set parameters.
+
+- `campaign(campaign: string)`
+
+Set an attribute which will tell the API to use the given string as the campaign UTM parameter when creating a queue appointment.
+
+- `content(content: string)`
+
+Set an attribute which will tell the API to use the given string as the content UTM parameter when creating a queue appointment.
+
+- `for(services: number | numbers[])`
+
+Set a relationship which will tell the API to use the given service identifier when creating a queue appointment.
+
+- `method(method: number)`
+
+Set a filter which will tell the API to use the given meeting method when creating a queue appointment.
+
+- `medium(medium: string)`
+
+Set an attribute which will tell the API to use the given string as the medium UTM parameter when creating a queue appointment.
+
+- `source(source: string)`
+
+Set an attribute which will tell the API to use the given string as the source UTM parameter when creating a queue appointment.
+
+- `supporting(locale: string | null)`
+
+Set a locale to use as a filter when not supplying a staff preference to ensure the best possible match when creating a queue appointment.
+
+- `through(origin: number)`
+
+Set an attribute which will tell the API to use the given origin constant as the booked through value when creating a queue appointment.
+
+- `with(client: ClientModel)`
+
+Set a relationship which will tell the API to use the given client model when creating a new queue appointment.
+
+- `workflow(workflow: number)`
+
+Set a relationship which will tell the API to use the given workflow identifier when creating a queue appointment.
+
+##### Example
+
+```javascript
+import { OpenApi, Client, Answer, MeetingMethods, Origins } from 'coconut-open-api-js';
+
+class QueueAppointments {
+  constructor() {
+    this.api = new OpenApi();
+  }
+
+  async book(attributes) {
+    const {
+      campaign, content, email,  firstName, language,
+      lastName, medium, notes, phone, question, source,
+      value, workflow
+    } = attributes;
+
+    const answer = (new Answer())
+      .for(question)
+      .is(value);
+    const client = (new client())
+      .answers(answer)
+      .messagable()
+      .named(firstName, lastName)
+      .provided(notes)
+      .reachable({ phone, email })
+      .speaks(language);
+
+    return this.api
+      .queueAppointments()
+      .campaign(campaign)
+      .content(content)
+      .medium(medium)
+      .method(MeetingMethods.AT_LOCATION)
+      .source(source)
+      .term(term)
+      .with(client)
+      .workflow(workflow)
+      .through(Origins.MODERN_CLIENT_VIEW)
+      .book();
+  }
+```
+
+### Clients
+
+##### Methods
+
+- `answers(answers: AnswerModel | AnswerModel[])`
+
+Set a relationship which will tell the API to use the given answer model(s) for the client when booking an appointment.
+
+- `messageable()`
+
+Set a flag on the client which determines that they have opted to receive sms messages.
+
+- `named(first: string, last: string)`
+
+Set the first and last name of the client.
+
+- `provided(notes: string)`
+
+Set any additional details the client has provided when booking an appointment.
+
+- `reachable(details: ReachableDetailParameters)`
+
+Set certain attributes on the client related to contact details such as cell phone and email.
+
+- `speaks(language: string)`
+
+Set the preferred locale of the client.
+
+##### Example
+
+```javascript
+import { Client, Answer } from 'coconut-open-api-js';
+
+class Clients {
+  static create(attributes) {
+    const {
+      firstName, lastName,
+      notes, phone, email, language, question, value
+    } = attributes;
+
+    const answer = (new Answer()).for(question).is(value);
+
+    return (new Client())
+      .answers(answer)
+      .messagable()
+      .named(firstName, lastName)
+      .provided(notes)
+      .reachable({ phone, email })
+      .speaks(language);
+  }
+}
+```
+
 ### Forms
 
 ##### Methods
