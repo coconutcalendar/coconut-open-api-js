@@ -9,6 +9,8 @@ export interface QueueAppointmentFilter {
   service?: number;
   through?: number;
   user?: number;
+  notes?: string;
+  workflow?: number;
 }
 
 export interface UtmParameters {
@@ -45,6 +47,8 @@ export interface QueueAppointmentParameters {
 export interface QueueAppointmentResource extends ConditionalResource {
   at(location: number): this;
 
+  book(): Promise<any>;
+
   by(user: number): this;
 
   for(services: number | number[]): this;
@@ -53,7 +57,11 @@ export interface QueueAppointmentResource extends ConditionalResource {
 
   through(origin: number): this;
 
+  provided(notes: string): this;
+
   with(client: ClientModel): this;
+
+  workflow(workflow: number): this;
 }
 
 export interface Utm {
@@ -123,6 +131,12 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     return this;
   }
 
+  public provided(notes: string): this {
+    this.filters.notes = notes;
+
+    return this;
+  }
+
   public through(origin: number): this {
     this.filters.through = origin;
 
@@ -131,6 +145,12 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
 
   public with(client: ClientModel): this {
     this.relationships.client.data = client;
+
+    return this;
+  }
+
+  public workflow(workflow: number): this {
+    this.filters.workflow = workflow;
 
     return this;
   }
@@ -189,7 +209,8 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
           service_id: this.filters.service,
           location_id: this.filters.location,
           meeting_method: this.filters.method,
-          notes: '',
+          notes: this.filters.notes,
+          workflow_id: this.filters.workflow,
         },
         relationships: {
           client: {
@@ -199,14 +220,12 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
       },
     };
 
-    if (this.filters.location && this.filters.service) {
-      if (this.filters.method) {
-        params.data.attributes.meeting_method = this.filters.method;
-      }
+    if (this.filters.method) {
+      params.data.attributes.meeting_method = this.filters.method;
+    }
 
-      if (this.filters.through) {
-        params.data.attributes.booked_through = this.filters.through;
-      }
+    if (this.filters.through) {
+      params.data.attributes.booked_through = this.filters.through;
     }
 
     if (this.hasUtm()) {

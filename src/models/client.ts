@@ -33,6 +33,7 @@ export interface ClientParameters {
   cell_phone?: string;
   email: string | null;
   answers?: AnswerModel[] | [];
+  receive_sms: boolean;
 }
 
 export interface ReachableDetailParameters {
@@ -51,6 +52,7 @@ export default class Client extends Model implements ClientModel {
       email: null,
       first_name: null,
       last_name: null,
+      receive_sms: false,
     };
   }
 
@@ -61,7 +63,7 @@ export default class Client extends Model implements ClientModel {
   }
 
   public messagable(messageable: boolean = true): this {
-    this.receive_sms = messageable;
+    this.attributes.receive_sms = messageable;
 
     return this;
   }
@@ -128,10 +130,10 @@ export default class Client extends Model implements ClientModel {
     });
 
     const parameters: ClientAttributes = {
-      type: 'attendees',
+      type: 'client',
     };
 
-    if (this.receive_sms) {
+    if (this.attributes.receive_sms) {
       parameters.receive_sms = this.receive_sms;
     }
 

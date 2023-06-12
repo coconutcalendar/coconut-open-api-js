@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios';
 
-import Client from './client';
+import { default as AxiosClient } from './client';
 import Days from './constants/days';
 import MeetingMethods from "./constants/meeting-methods";
 import Notifications from './constants/notifications';
@@ -8,6 +8,7 @@ import Origins from './constants/origins';
 import Visibilities from "./constants/visibilities";
 import Answer from './models/answer';
 import Attendee from './models/attendee';
+import Client from './models/client';
 import Preference from './models/preference';
 import Response from './models/response';
 import Appointment, { AppointmentResource } from './resources/appointment';
@@ -52,7 +53,7 @@ export interface Sortable extends Resource {
   sortBy(sortable: string): this;
 }
 
-export { Answer, Attendee, Days, MeetingMethods, Notifications, Origins, Preference, Response, Visibilities };
+export { Answer, Attendee, Client, Days, MeetingMethods, Notifications, Origins, Preference, Response, Visibilities };
 
 export class OpenApi {
   protected appointment: AppointmentResource;
@@ -71,7 +72,7 @@ export class OpenApi {
   protected waitTime: WaitTimeResource;
 
   constructor(domain?: string) {
-    this.client = Client(domain);
+    this.client = AxiosClient(domain);
     this.domain = domain;
     this.appointment = new Appointment(this.client);
     this.queueAppointment = new QueueAppointment(this.client);
