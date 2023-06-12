@@ -194,12 +194,12 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
       return {};
     }
 
-    let params: QueueAppointmentParameters = {
+    const params: QueueAppointmentParameters = {
       data: {
         attributes: {
-          service_id: this.filters.service,
           location_id: this.filters.location,
           meeting_method: this.filters.method,
+          service_id: this.filters.service,
           ...this.filters.workflow && {workflow_id: this.filters.workflow},
           ...this.filters.notes && {notes: this.filters.notes},
           ...this.filters.through && {booked_through: this.filters.through},

@@ -43,7 +43,7 @@ export interface ReachableDetailParameters {
 
 export default class Client extends Model implements ClientModel {
   protected attributes: ClientParameters;
-  protected receive_sms = false;
+  protected receiveSms = false;
 
   constructor() {
     super();
@@ -134,7 +134,7 @@ export default class Client extends Model implements ClientModel {
     };
 
     if (this.attributes.receive_sms) {
-      parameters.receive_sms = this.receive_sms;
+      parameters.receive_sms = this.receiveSms;
     }
 
     if (Object.keys(attributes).length > 0) {
