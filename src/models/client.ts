@@ -41,7 +41,6 @@ export interface ReachableDetailParameters {
 
 export default class Client extends Model implements ClientModel {
   protected attributes: ClientParameters;
-  protected receiveSms = false;
 
   constructor() {
     super();
