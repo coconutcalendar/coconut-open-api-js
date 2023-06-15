@@ -1,7 +1,6 @@
 import { ModelInterface } from '../index';
-import Answer, { AnswerModel } from './answer';
+import { AnswerModel } from './answer';
 import Model from './model';
-import { ResponseModel } from './response';
 
 export interface ClientModel extends ModelInterface {
   answers(answers: AnswerModel | AnswerModel[]): this;
@@ -22,7 +21,6 @@ export interface ClientModel extends ModelInterface {
 export interface ClientAttributes {
   attributes?: object;
   type: string;
-  receive_sms?: boolean;
 }
 
 export interface ClientParameters {
@@ -97,6 +95,11 @@ export default class Client extends Model implements ClientModel {
     let parameters: object = this.parameters();
     const answers = this.attributes.answers || [];
 
+    parameters = {
+      ...parameters,
+      receive_sms: this.attributes.receive_sms,
+    };
+
     if (answers.length > 0) {
       parameters = {
         ...parameters,
@@ -119,6 +122,7 @@ export default class Client extends Model implements ClientModel {
       lang: this.attributes.lang,
       last_name: this.attributes.last_name,
       notes: this.attributes.notes,
+      receive_sms: this.attributes.receive_sms,
     };
 
     Object.keys(attributes).forEach(key => {
@@ -132,10 +136,6 @@ export default class Client extends Model implements ClientModel {
     const parameters: ClientAttributes = {
       type: 'client',
     };
-
-    if (this.attributes.receive_sms) {
-      parameters.receive_sms = this.receiveSms;
-    }
 
     if (Object.keys(attributes).length > 0) {
       parameters.attributes = attributes;
