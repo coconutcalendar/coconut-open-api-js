@@ -3,6 +3,8 @@ import { AnswerModel } from './answer';
 import Model from './model';
 
 export interface ClientModel extends ModelInterface {
+  alias(alias: string | number): this;
+
   answers(answers: AnswerModel | AnswerModel[]): this;
 
   messagable(messageable: boolean): this;
@@ -24,6 +26,7 @@ export interface ClientAttributes {
 }
 
 export interface ClientParameters {
+  alias?: string | number;
   first_name: string | null;
   last_name: string | null;
   notes?: string;
@@ -51,6 +54,12 @@ export default class Client extends Model implements ClientModel {
       last_name: null,
       receive_sms: false,
     };
+  }
+
+  public alias(alias: string | number): this {
+    this.attributes.alias = alias;
+
+    return this;
   }
 
   public answers(answers: AnswerModel | AnswerModel[]): this {
@@ -112,6 +121,7 @@ export default class Client extends Model implements ClientModel {
     const attributes: object = {
       cell_phone: this.attributes.cell_phone,
       email: this.attributes.email,
+      external_id: this.attributes.alias,
       first_name: this.attributes.first_name,
       lang: this.attributes.lang,
       last_name: this.attributes.last_name,

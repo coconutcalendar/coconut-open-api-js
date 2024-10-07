@@ -137,6 +137,7 @@ it('can book a queue appointment with the minimum required parameters', async ()
 it('can book a queue appointment with all available parameters', async () => {
   const resource = new QueueAppointment(mockAxios);
   const client = new Client()
+    .alias('EFG-456')
     .answers(new Answer().for(1).is('this answer'))
     .named('Jane', 'Doe')
     .messagable()
@@ -182,6 +183,7 @@ it('can book a queue appointment with all available parameters', async () => {
         client: {
           data: {
             attributes: {
+              external_id: 'EFG-456',
               first_name: 'Jane',
               last_name: 'Doe',
               cell_phone: '1-555-555-5555',
