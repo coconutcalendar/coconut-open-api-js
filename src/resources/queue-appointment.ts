@@ -63,7 +63,7 @@ export interface QueueAppointmentResource extends ConditionalResource {
 
   staff(id: number): this;
 
-  language(lang: string): this;
+  language(locale: string): this;
 
   with(client: ClientModel): this;
 
@@ -155,8 +155,8 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     return this;
   }
 
-  public language(lang: string): this {
-    this.filters.preferred_lang = lang;
+  public language(locale: string): this {
+    this.filters.preferred_lang = locale;
 
     return this;
   }
