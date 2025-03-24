@@ -10,6 +10,8 @@ export interface QueueAppointmentFilter {
   through?: number;
   notes?: string;
   workflow?: number;
+  preferred_lang?: string;
+  preferred_staff_id?: number;
 }
 
 export interface UtmParameters {
@@ -23,6 +25,8 @@ export interface UtmParameters {
 export interface QueueAppointmentParameters {
   data: {
     attributes: {
+      preferred_lang?: string;
+      preferred_staff_id?: number;
       booked_through?: number;
       service_id?: number;
       location_id?: number;
@@ -56,6 +60,10 @@ export interface QueueAppointmentResource extends ConditionalResource {
   through(origin: number): this;
 
   provided(notes: string): this;
+
+  staff(id: number): this;
+
+  language(lang: string): this;
 
   with(client: ClientModel): this;
 
@@ -147,6 +155,18 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     return this;
   }
 
+  public language(lang: string): this {
+    this.filters.preferred_lang = lang;
+
+    return this;
+  }
+
+  public staff(id: number): this {
+    this.filters.preferred_staff_id = id;
+
+    return this;
+  }
+
   public campaign(campaign: string): this {
     this.utm.campaign = campaign;
 
@@ -196,6 +216,8 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
           location_id: this.filters.location,
           meeting_method: this.filters.method,
           service_id: this.filters.service,
+          ...(this.filters.preferred_staff_id && { preferred_staff_id: this.filters.preferred_staff_id }),
+          ...(this.filters.preferred_lang && { preferred_lang: this.filters.preferred_lang }),
           ...(this.filters.workflow && { workflow_id: this.filters.workflow }),
           ...(this.filters.notes && { notes: this.filters.notes }),
           ...(this.filters.through && { booked_through: this.filters.through }),

@@ -160,6 +160,8 @@ it('can book a queue appointment with all available parameters', async () => {
     .medium('test medium')
     .source('test source')
     .term('test term')
+    .language('en')
+    .staff(1)
     .with(client)
     .book();
 
@@ -171,6 +173,8 @@ it('can book a queue appointment with all available parameters', async () => {
         service_id: 2,
         meeting_method: 1,
         workflow_id: 12,
+        preferred_lang: 'en',
+        preferred_staff_id: 1,
         notes: 'notes',
         booked_through: Origins.MODERN_CLIENT_VIEW,
         campaign: 'test campaign',
