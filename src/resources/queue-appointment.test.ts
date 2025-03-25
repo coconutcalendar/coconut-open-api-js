@@ -218,6 +218,86 @@ it('can book a queue appointment with all available parameters', async () => {
   });
 });
 
+it('can book a queue appointment with all available parameters except preferred staff', async () => {
+  const resource = new QueueAppointment(mockAxios);
+  const client = new Client()
+    .alias('EFG-456')
+    .answers(new Answer().for(1).is('this answer'))
+    .named('Jane', 'Doe')
+    .messagable()
+    .provided('testing notes')
+    .reachable({
+      email: 'test@example.com',
+      cell_phone: '1-555-555-5555',
+    })
+    .speaks('fr');
+
+  await resource
+    .at(1)
+    .for(2)
+    .method(1)
+    .through(Origins.MODERN_CLIENT_VIEW)
+    .provided('notes')
+    .workflow(12)
+    .campaign('test campaign')
+    .content('test content')
+    .medium('test medium')
+    .source('test source')
+    .term('test term')
+    .with(client)
+    .book();
+
+  expect(mockAxios.post).toHaveBeenCalledTimes(1);
+  expect(mockAxios.post).toHaveBeenCalledWith('queue-appointments', {
+    data: {
+      attributes: {
+        location_id: 1,
+        service_id: 2,
+        meeting_method: 1,
+        workflow_id: 12,
+        notes: 'notes',
+        booked_through: Origins.MODERN_CLIENT_VIEW,
+        campaign: 'test campaign',
+        content: 'test content',
+        medium: 'test medium',
+        source: 'test source',
+        term: 'test term',
+      },
+      relationships: {
+        client: {
+          data: {
+            attributes: {
+              external_id: 'EFG-456',
+              first_name: 'Jane',
+              last_name: 'Doe',
+              cell_phone: '1-555-555-5555',
+              email: 'test@example.com',
+              lang: 'fr',
+              notes: 'testing notes',
+              receive_sms: true,
+            },
+            type: 'client',
+            relationships: {
+              answers: {
+                data: [
+                  {
+                    attributes: {
+                      question_id: 1,
+                      value: 'this answer',
+                    },
+                    type: 'answers',
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      type: 'queue-appointments',
+    },
+  });
+});
+
 it('can book a queue appointment with preferred language only', async () => {
   const resource = new QueueAppointment(mockAxios);
   const client = new Client();
