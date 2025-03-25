@@ -393,11 +393,11 @@ Set a filter which will tell the API to use the given meeting method when creati
 
 Set an attribute which will tell the API to prefer a specific staff language.
 
-- `language(locale: string)`
+- `preferredLanguage(locale: string)`
 
 Set an attribute which will tell the API to prefer a specific staff id.
 
-- `staff(id: string)`
+- `preferredStaff(id: string)`
 
 Set an attribute which will tell the API to use the given string as the medium UTM parameter when creating a queue appointment.
 

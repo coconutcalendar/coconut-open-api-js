@@ -160,8 +160,8 @@ it('can book a queue appointment with all available parameters', async () => {
     .medium('test medium')
     .source('test source')
     .term('test term')
-    .language('en')
-    .staff(1)
+    .preferredLanguage('en')
+    .preferredStaff(1)
     .with(client)
     .book();
 
@@ -215,6 +215,52 @@ it('can book a queue appointment with all available parameters', async () => {
       },
       type: 'queue-appointments',
     },
+  });
+});
+
+it('can book a queue appointment with preferred language only', async () => {
+  const resource = new QueueAppointment(mockAxios);
+  const client = new Client();
+
+  await resource
+    .at(1)
+    .for(2)
+    .method(1)
+    .preferredLanguage('en')
+    .with(client.named('Jane', 'Doe'))
+    .book();
+
+  expect(mockAxios.post).toHaveBeenCalledTimes(1);
+  expect(mockAxios.post).toHaveBeenCalledWith('queue-appointments', {
+    data: expect.objectContaining({
+      attributes: expect.objectContaining({
+        preferred_lang: 'en',
+      }),
+      type: 'queue-appointments',
+    }),
+  });
+});
+
+it('can book a queue appointment with preferred staff id only', async () => {
+  const resource = new QueueAppointment(mockAxios);
+  const client = new Client();
+
+  await resource
+    .at(1)
+    .for(2)
+    .method(1)
+    .preferredStaff(123)
+    .with(client.named('Jane', 'Doe'))
+    .book();
+
+  expect(mockAxios.post).toHaveBeenCalledTimes(1);
+  expect(mockAxios.post).toHaveBeenCalledWith('queue-appointments', {
+    data: expect.objectContaining({
+      attributes: expect.objectContaining({
+        preferred_staff_id: 123,
+      }),
+      type: 'queue-appointments',
+    }),
   });
 });
 
