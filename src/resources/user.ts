@@ -60,6 +60,8 @@ export interface UserResource extends Pageable, ConditionalResource {
   withinLocationCategory(locationCategory?: number | string): this;
 
   withinUserCategory(category?: number | string): this;
+
+  availableInLobby(lobbyLocationId: number | string): this;
 }
 
 export default class User extends Conditional implements UserResource {
