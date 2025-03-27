@@ -161,6 +161,7 @@ it('can book a queue appointment with all available parameters', async () => {
     .source('test source')
     .term('test term')
     .preferredLanguage('en')
+    .language('fr')
     .preferredStaff(1)
     .with(client)
     .book();

@@ -391,6 +391,10 @@ Set a filter which will tell the API to use the given meeting method when creati
 
 - `medium(medium: string)`
 
+Set an attribute which will tell the API the language of the walkin.
+
+- `language(locale: string)`
+
 Set an attribute which will tell the API to prefer a specific staff language.
 
 - `preferredLanguage(locale: string)`
