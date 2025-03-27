@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.12.20] - 2025-03-27
+
+- Adds missing TS types lobby availability filter on users API. 
+[#57](https://github.com/coconutcalendar/coconut-open-api-js/pull/57)
+
 ## [0.12.19] - 2025-03-27
 
 - Adds support for a filter for lobby availability on users API. 
