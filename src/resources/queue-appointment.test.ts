@@ -176,6 +176,7 @@ it('can book a queue appointment with all available parameters', async () => {
         workflow_id: 12,
         preferred_lang: 'en',
         preferred_staff_id: 1,
+        lang: 'fr',
         notes: 'notes',
         booked_through: Origins.MODERN_CLIENT_VIEW,
         campaign: 'test campaign',

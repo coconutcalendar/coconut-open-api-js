@@ -228,6 +228,7 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
           service_id: this.filters.service,
           ...(this.filters.preferred_staff_id && { preferred_staff_id: this.filters.preferred_staff_id }),
           ...(this.filters.preferred_lang && { preferred_lang: this.filters.preferred_lang }),
+          ...(this.filters.lang && { lang: this.filters.lang }),
           ...(this.filters.workflow && { workflow_id: this.filters.workflow }),
           ...(this.filters.notes && { notes: this.filters.notes }),
           ...(this.filters.through && { booked_through: this.filters.through }),
