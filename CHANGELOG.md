@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.12.21] - 2025-03-31
+
+- Adds support for lang on queue-appointment API. 
+[#58](https://github.com/coconutcalendar/coconut-open-api-js/pull/58)
+
 ## [0.12.20] - 2025-03-27
 
 - Adds missing TS types lobby availability filter on users API. 
