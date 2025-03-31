@@ -10,6 +10,7 @@ export interface QueueAppointmentFilter {
   through?: number;
   notes?: string;
   workflow?: number;
+  lang?: string;
   preferred_lang?: string;
   preferred_staff_id?: number;
 }
@@ -27,6 +28,7 @@ export interface QueueAppointmentParameters {
     attributes: {
       preferred_lang?: string;
       preferred_staff_id?: number;
+      lang?: string;
       booked_through?: number;
       service_id?: number;
       location_id?: number;
@@ -64,6 +66,8 @@ export interface QueueAppointmentResource extends ConditionalResource {
   preferredStaff(id: number): this;
 
   preferredLanguage(locale: string): this;
+
+  language(locale: string): this;
 
   with(client: ClientModel): this;
 
@@ -151,6 +155,12 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
 
   public workflow(workflow: number): this {
     this.filters.workflow = workflow;
+
+    return this;
+  }
+
+  public language(locale: string): this {
+    this.filters.lang = locale;
 
     return this;
   }
