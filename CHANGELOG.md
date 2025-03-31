@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.12.22] - 2025-03-31
+
+- Adds missing attributes for lang on queue-appointment API. 
+[#59](https://github.com/coconutcalendar/coconut-open-api-js/pull/59)
+
 ## [0.12.21] - 2025-03-31
 
 - Adds support for lang on queue-appointment API. 

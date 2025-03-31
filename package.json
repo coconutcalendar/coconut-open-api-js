@@ -1,6 +1,6 @@
 {
   "name": "coconut-open-api-js",
-  "version": "0.12.21",
+  "version": "0.12.22",
   "description": "Coconut Calendar JS Open API SDK",
   "main": "dist/index.js",
   "files": [
