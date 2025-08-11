@@ -19,7 +19,7 @@ export interface UserFilter {
   location?: number | string;
   location_category?: number | string;
   lobby_location_id?: number | string;
-  physical_staff_only?: boolean;
+  without_remote_staff_only?: boolean;
   method?: number;
   resource?: string;
   services?: number | number[] | string | string[];
@@ -34,7 +34,7 @@ export interface UserParameters {
   location?: number | string;
   location_category?: number | string;
   lobby_location_id?: number | string;
-  with_physical_staff_only_at_location?: number | string;
+  without_remote_staff_only_at_location?: number | string;
   meeting_method?: number;
   province?: string;
   resource?: string;
@@ -65,7 +65,7 @@ export interface UserResource extends Pageable, ConditionalResource {
 
   availableInLobby(lobbyLocationId: number | string): this;
 
-  withPhysicalStaffOnly(physicalStaffOnly?: boolean): this;
+  withoutRemoteStaffOnly(withoutRemoteStaffOnly?: boolean): this;
 }
 
 export default class User extends Conditional implements UserResource {
@@ -109,12 +109,6 @@ export default class User extends Conditional implements UserResource {
     keys.map(key => {
       this.filters[key] = details[key];
     });
-
-    return this;
-  }
-
-  public withPhysicalStaffOnly(physicalStaffOnly: boolean = true): this {
-    this.filters.physical_staff_only = physicalStaffOnly;
 
     return this;
   }
@@ -196,6 +190,12 @@ export default class User extends Conditional implements UserResource {
     return this;
   }
 
+  public withoutRemoteStaffOnly(withoutRemoteStaffOnly: boolean = true): this {
+    this.filters.without_remote_staff_only = withoutRemoteStaffOnly;
+
+    return this;
+  }
+
   public availableInLobby(lobbyLocationId: number | string): this {
     this.filters.lobby_location_id = lobbyLocationId;
   
@@ -252,9 +252,9 @@ export default class User extends Conditional implements UserResource {
 
     if (
       typeof this.filters.location !== 'undefined' && 
-      this.filters.physical_staff_only === true
+      this.filters.without_remote_staff_only === true
     ) {
-      params.with_physical_staff_only_at_location = this.filters.location;
+      params.without_remote_staff_only_at_location = this.filters.location;
     }
 
     return params;

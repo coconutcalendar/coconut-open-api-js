@@ -179,9 +179,9 @@ it('will set resource filter', async () => {
 it('will set physical staff filter', async () => {
   const resource = new User(mockAxios);
 
-  expect(resource.at(3).withPhysicalStaffOnly()).toHaveProperty('filters', {
+  expect(resource.at(3).withoutRemoteStaffOnly()).toHaveProperty('filters', {
     location: 3,
-    physical_staff_only: true,
+    without_remote_staff_only: true,
   });
 });
 
@@ -247,7 +247,7 @@ it('can get users with physical staff filter if location is selected', async () 
   const resource = new User(mockAxios);
 
   await resource
-    .withPhysicalStaffOnly()
+    .withoutRemoteStaffOnly()
     .get();
 
   expect(mockAxios.get).toHaveBeenCalledTimes(1);
@@ -256,18 +256,18 @@ it('can get users with physical staff filter if location is selected', async () 
   });
 });
 
-it('can get users with physical staff filter if location is selected', async () => {
+it('can get users without remote staff filter if location is selected', async () => {
   const resource = new User(mockAxios);
 
   await resource
     .at(44)
-    .withPhysicalStaffOnly()
+    .withoutRemoteStaffOnly()
     .get();
 
   expect(mockAxios.get).toHaveBeenCalledTimes(1);
   expect(mockAxios.get).toHaveBeenCalledWith('users', {
     params: {
-      'filter[with_physical_staff_only_at_location]': 44,
+      'filter[without_remote_staff_only_at_location]': 44,
       'filter[location]': 44,
     },
   });
@@ -286,7 +286,7 @@ it('can get users with additional parameters', async () => {
     .through('client_view')
     .withInviteOnly()
     .withinLocationCategory(1)
-    .withPhysicalStaffOnly()
+    .withoutRemoteStaffOnly()
     .find(1)
     .sortBy('created')
     .take(5)
@@ -298,7 +298,7 @@ it('can get users with additional parameters', async () => {
     params: {
       'filter[assignments]': true,
       'filter[client_view_meeting_method]': MeetingMethods.PHONE_CALL,
-      'filter[with_physical_staff_only_at_location]': 1,
+      'filter[without_remote_staff_only_at_location]': 1,
       'filter[invite_only_resources]': 1,
       'filter[location]': 1,
       'filter[lobby_location_id]': 1,

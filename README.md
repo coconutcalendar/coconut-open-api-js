@@ -1066,7 +1066,7 @@ Set a filter which will tell the API to return users that are specifically for u
 
 Set a filter which will tell the API to return users that have a `lobby_location_id` matching the provided identifier.
 
-- `withPhysicalStaffOnly(physicalStaffOnly?: boolean)`
+- `withoutRemoteStaffOnly(withoutRemoteStaffOnly?: boolean)`
 
 Set a filter which will tell the API to return users are not marked as remote only at a location. This filter will only works properly when used in conjunction with the `at` filter above;
 
