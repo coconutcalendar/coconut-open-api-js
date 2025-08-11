@@ -19,6 +19,7 @@ export interface UserFilter {
   location?: number | string;
   location_category?: number | string;
   lobby_location_id?: number | string;
+  remote_staff?: boolean;
   method?: number;
   resource?: string;
   services?: number | number[] | string | string[];
@@ -33,6 +34,7 @@ export interface UserParameters {
   location?: number | string;
   location_category?: number | string;
   lobby_location_id?: number | string;
+  without_remote_staff?: number | string;
   meeting_method?: number;
   province?: string;
   resource?: string;
@@ -62,6 +64,8 @@ export interface UserResource extends Pageable, ConditionalResource {
   withinUserCategory(category?: number | string): this;
 
   availableInLobby(lobbyLocationId: number | string): this;
+
+  withoutRemoteStaff(excludeRemoteStaff?: boolean): this;
 }
 
 export default class User extends Conditional implements UserResource {
@@ -105,6 +109,12 @@ export default class User extends Conditional implements UserResource {
     keys.map(key => {
       this.filters[key] = details[key];
     });
+
+    return this;
+  }
+
+  public withoutRemoteStaff(excludeRemoteStaff: boolean = true): this {
+    this.filters.remote_staff = !excludeRemoteStaff;
 
     return this;
   }
@@ -238,6 +248,13 @@ export default class User extends Conditional implements UserResource {
 
     if (typeof this.filters.user !== 'undefined') {
       params.user = this.filters.user;
+    }
+
+    if (
+      typeof this.filters.location !== 'undefined' && 
+      this.filters.remote_staff === false
+    ) {
+      params.without_remote_staff = this.filters.location;
     }
 
     return params;

@@ -176,6 +176,15 @@ it('will set resource filter', async () => {
   });
 });
 
+it('will set remote staff filter', async () => {
+  const resource = new User(mockAxios);
+
+  expect(resource.at(3).withoutRemoteStaff()).toHaveProperty('filters', {
+    location: 3,
+    remote_staff: false,
+  });
+});
+
 it('will set the limit given', async () => {
   const resource = new User(mockAxios);
 
@@ -234,6 +243,36 @@ it('can get users without additional parameters', async () => {
   expect(mockAxios.get).toHaveBeenCalledWith('users', { params: {} });
 });
 
+it('can get users with remote staff filter if location is selected', async () => {
+  const resource = new User(mockAxios);
+
+  await resource
+    .withoutRemoteStaff()
+    .get();
+
+  expect(mockAxios.get).toHaveBeenCalledTimes(1);
+  expect(mockAxios.get).toHaveBeenCalledWith('users', {
+    params: {},
+  });
+});
+
+it('can get users with remote staff filter if location is selected', async () => {
+  const resource = new User(mockAxios);
+
+  await resource
+    .at(44)
+    .withoutRemoteStaff()
+    .get();
+
+  expect(mockAxios.get).toHaveBeenCalledTimes(1);
+  expect(mockAxios.get).toHaveBeenCalledWith('users', {
+    params: {
+      'filter[without_remote_staff]': 44,
+      'filter[location]': 44,
+    },
+  });
+});
+
 it('can get users with additional parameters', async () => {
   const resource = new User(mockAxios);
 
@@ -247,6 +286,7 @@ it('can get users with additional parameters', async () => {
     .through('client_view')
     .withInviteOnly()
     .withinLocationCategory(1)
+    .withoutRemoteStaff()
     .find(1)
     .sortBy('created')
     .take(5)
@@ -258,6 +298,7 @@ it('can get users with additional parameters', async () => {
     params: {
       'filter[assignments]': true,
       'filter[client_view_meeting_method]': MeetingMethods.PHONE_CALL,
+      'filter[without_remote_staff]': 1,
       'filter[invite_only_resources]': 1,
       'filter[location]': 1,
       'filter[lobby_location_id]': 1,

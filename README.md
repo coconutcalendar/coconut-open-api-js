@@ -1066,6 +1066,10 @@ Set a filter which will tell the API to return users that are specifically for u
 
 Set a filter which will tell the API to return users that have a `lobby_location_id` matching the provided identifier.
 
+- `withoutRemoteStaff(excludeRemoteStaff?: boolean)`
+
+Set a filter which will tell the API to return users that only works physically at a location. This filter will only work properly when used in conjucture with the `at` filter above;
+
 ##### Example
 
 ```javascript
