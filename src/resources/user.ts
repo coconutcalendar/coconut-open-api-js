@@ -19,7 +19,7 @@ export interface UserFilter {
   location?: number | string;
   location_category?: number | string;
   lobby_location_id?: number | string;
-  remote_staff?: boolean;
+  include_remote_staff?: boolean;
   method?: number;
   resource?: string;
   services?: number | number[] | string | string[];
@@ -114,7 +114,7 @@ export default class User extends Conditional implements UserResource {
   }
 
   public withoutRemoteStaff(excludeRemoteStaff: boolean = true): this {
-    this.filters.remote_staff = !excludeRemoteStaff;
+    this.filters.include_remote_staff = !excludeRemoteStaff;
 
     return this;
   }
@@ -252,7 +252,7 @@ export default class User extends Conditional implements UserResource {
 
     if (
       typeof this.filters.location !== 'undefined' && 
-      this.filters.remote_staff === false
+      this.filters.include_remote_staff === false
     ) {
       params.without_remote_staff = this.filters.location;
     }

@@ -181,7 +181,7 @@ it('will set remote staff filter', async () => {
 
   expect(resource.at(3).withoutRemoteStaff()).toHaveProperty('filters', {
     location: 3,
-    remote_staff: false,
+    include_remote_staff: false,
   });
 });
 

@@ -1068,7 +1068,7 @@ Set a filter which will tell the API to return users that have a `lobby_location
 
 - `withoutRemoteStaff(excludeRemoteStaff?: boolean)`
 
-Set a filter which will tell the API to return users that only works physically at a location. This filter will only work properly when used in conjucture with the `at` filter above;
+Set a filter which will tell the API to return users that only works physically at a location. This filter will only works properly when used in conjuction with the `at` filter above;
 
 ##### Example
 
