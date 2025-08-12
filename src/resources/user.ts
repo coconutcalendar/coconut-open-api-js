@@ -19,6 +19,7 @@ export interface UserFilter {
   location?: number | string;
   location_category?: number | string;
   lobby_location_id?: number | string;
+  without_remote_staff_only?: boolean;
   method?: number;
   resource?: string;
   services?: number | number[] | string | string[];
@@ -33,6 +34,7 @@ export interface UserParameters {
   location?: number | string;
   location_category?: number | string;
   lobby_location_id?: number | string;
+  without_remote_staff_only_at_location?: number | string;
   meeting_method?: number;
   province?: string;
   resource?: string;
@@ -62,6 +64,8 @@ export interface UserResource extends Pageable, ConditionalResource {
   withinUserCategory(category?: number | string): this;
 
   availableInLobby(lobbyLocationId: number | string): this;
+
+  withoutRemoteStaffOnly(withoutRemoteStaffOnly?: boolean): this;
 }
 
 export default class User extends Conditional implements UserResource {
@@ -186,6 +190,12 @@ export default class User extends Conditional implements UserResource {
     return this;
   }
 
+  public withoutRemoteStaffOnly(withoutRemoteStaffOnly: boolean = true): this {
+    this.filters.without_remote_staff_only = withoutRemoteStaffOnly;
+
+    return this;
+  }
+
   public availableInLobby(lobbyLocationId: number | string): this {
     this.filters.lobby_location_id = lobbyLocationId;
   
@@ -238,6 +248,13 @@ export default class User extends Conditional implements UserResource {
 
     if (typeof this.filters.user !== 'undefined') {
       params.user = this.filters.user;
+    }
+
+    if (
+      typeof this.filters.location !== 'undefined' && 
+      this.filters.without_remote_staff_only === true
+    ) {
+      params.without_remote_staff_only_at_location = this.filters.location;
     }
 
     return params;
