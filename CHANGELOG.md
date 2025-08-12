@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.12.23] - 2025-03-31
+
+- Adds a filter for remote staff only on the user API. 
+[#60](https://github.com/coconutcalendar/coconut-open-api-js/pull/60)
+
 ## [0.12.22] - 2025-03-31
 
 - Adds missing attributes for lang on queue-appointment API. 
