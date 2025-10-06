@@ -13,6 +13,7 @@ export interface QueueAppointmentFilter {
   lang?: string;
   preferred_lang?: string;
   preferred_staff_id?: number;
+  recaptcha_token?: string | null;
 }
 
 export interface UtmParameters {
@@ -40,6 +41,7 @@ export interface QueueAppointmentParameters {
       source?: string;
       medium?: string;
       term?: string;
+      recaptcha_token?: string;
     };
     relationships: {
       client: {
@@ -72,6 +74,8 @@ export interface QueueAppointmentResource extends ConditionalResource {
   with(client: ClientModel): this;
 
   workflow(workflow: number): this;
+
+  recaptcha(recaptchaToken: string): this;
 }
 
 export interface Utm {
@@ -155,6 +159,12 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
 
   public workflow(workflow: number): this {
     this.filters.workflow = workflow;
+
+    return this;
+  }
+
+  public recaptcha(recaptchaToken: string): this {
+    this.filters.recaptcha_token = recaptchaToken;
 
     return this;
   }
@@ -253,6 +263,10 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
 
     if (this.filters.through) {
       params.data.attributes.booked_through = this.filters.through;
+    }
+
+    if (this.filters.recaptcha_token) {
+      params.data.attributes.recaptcha_token = this.filters.recaptcha_token;
     }
 
     return params;

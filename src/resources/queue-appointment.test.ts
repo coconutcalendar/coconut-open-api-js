@@ -163,6 +163,7 @@ it('can book a queue appointment with all available parameters', async () => {
     .preferredLanguage('en')
     .language('fr')
     .preferredStaff(1)
+    .recaptcha('foo')
     .with(client)
     .book();
 
@@ -184,6 +185,7 @@ it('can book a queue appointment with all available parameters', async () => {
         medium: 'test medium',
         source: 'test source',
         term: 'test term',
+        recaptcha_token: 'foo',
       },
       relationships: {
         client: {
