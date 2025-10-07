@@ -13,7 +13,7 @@ export interface QueueAppointmentFilter {
   lang?: string;
   preferred_lang?: string;
   preferred_staff_id?: number;
-  recaptcha_token?: string | null;
+  recaptcha_token?: string;
 }
 
 export interface UtmParameters {
