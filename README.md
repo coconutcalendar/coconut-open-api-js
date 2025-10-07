@@ -116,6 +116,10 @@ Set an attribute which will tell the API to use the given string as the medium U
 
 Set a filter to determine who should be notified when booking an appointment.
 
+- `recaptcha(recaptcha_token: string)`
+
+Set an attribute which will be used to validate a Google Enterprise ReCaptcha check (if applicable).
+
 - `reschedule(appointment: number, code: string)`
 
 Reschedule an appointment matching the given appointment identifier using the pre-set start parameter.
@@ -404,6 +408,10 @@ Set an attribute which will tell the API to prefer a specific staff id.
 - `preferredStaff(id: string)`
 
 Set an attribute which will tell the API to use the given string as the medium UTM parameter when creating a queue appointment.
+
+- `recaptcha(recaptcha_token: string)`
+
+Set an attribute which will be used to validate a Google Enterprise ReCaptcha check (if applicable).
 
 - `source(source: string)`
 
