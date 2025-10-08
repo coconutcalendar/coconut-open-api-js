@@ -6,6 +6,14 @@ import Answer from '../models/answer';
 import Client from '../models/client';
 import QueueAppointment from './queue-appointment';
 
+it('can set the recaptcha property', async () => {
+  const resource = new QueueAppointment(mockAxios);
+
+  expect(resource.recaptcha('foo')).toHaveProperty('filters', {
+    recaptcha_token: 'foo',
+  });
+});
+
 it('can set the workflow property', async () => {
   const resource = new QueueAppointment(mockAxios);
 
@@ -163,6 +171,7 @@ it('can book a queue appointment with all available parameters', async () => {
     .preferredLanguage('en')
     .language('fr')
     .preferredStaff(1)
+    .recaptcha('foo')
     .with(client)
     .book();
 
@@ -184,6 +193,7 @@ it('can book a queue appointment with all available parameters', async () => {
         medium: 'test medium',
         source: 'test source',
         term: 'test term',
+        recaptcha_token: 'foo',
       },
       relationships: {
         client: {
