@@ -2,7 +2,12 @@
 
 ## [Unreleased]
 
-## [0.12.23] - 2025-03-31
+## [0.12.24] - 2025-10-08
+
+- Adds support for recaptcha_token to queue-appointments. 
+[#61](https://github.com/coconutcalendar/coconut-open-api-js/pull/61)
+
+## [0.12.23] - 2025-08-12
 
 - Adds a filter for remote staff only on the user API. 
 [#60](https://github.com/coconutcalendar/coconut-open-api-js/pull/60)
