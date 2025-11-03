@@ -21,6 +21,22 @@ it('can set the invite only resources filter to false', async () => {
   });
 });
 
+it('will set the group service filter to false by default', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.group()).toHaveProperty('filters', {
+    group_service: false,
+  });
+});
+
+it('can set the group service resources filter to true', async () => {
+  const resource = new TimeSlot(mockAxios);
+
+  expect(resource.group(true)).toHaveProperty('filters', {
+    group_service: true,
+  });
+});
+
 it('will set location filter using a number', async () => {
   const resource = new TimeSlot(mockAxios);
 
