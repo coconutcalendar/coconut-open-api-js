@@ -595,6 +595,10 @@ Retrieve a given location's details based on the given identifier.
 
 Send the API request using the pre-set filters.
 
+- `group()`
+
+Set a filter which will tell the API to return only group type services.
+
 - `invitable()`
 
 Set a filter which will tell the API to return locations that are specifically invite only.
@@ -954,6 +958,10 @@ Send the API request using the pre-set filters.
 - `google(token: string)`
 
 Set a filter which will tell the API to return time slots that are not conflicting with events associated with the Google access token.
+
+- `group(isGroup: boolean)`
+
+Set a filter which will tell the API the service selected is a group service
 
 - `in(timezone: string)`
 
