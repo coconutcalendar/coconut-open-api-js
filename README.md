@@ -955,6 +955,10 @@ Send the API request using the pre-set filters.
 
 Set a filter which will tell the API to return time slots that are not conflicting with events associated with the Google access token.
 
+- `group(isGroup: number)`
+
+Set a filter which will tell the API the service selected is a group service
+
 - `in(timezone: string)`
 
 Set a filter which will tell the API to return time slots in the given timezone.
