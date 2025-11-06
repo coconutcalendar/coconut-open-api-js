@@ -595,6 +595,10 @@ Retrieve a given location's details based on the given identifier.
 
 Send the API request using the pre-set filters.
 
+- `group()`
+
+Set a filter which will tell the API to return only group type services.
+
 - `invitable()`
 
 Set a filter which will tell the API to return locations that are specifically invite only.
