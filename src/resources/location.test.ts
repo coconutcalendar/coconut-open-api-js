@@ -146,6 +146,23 @@ it('will set the virtual locations only filter', async () => {
   });
 });
 
+it('will set the group service filter to false by default', async () => {
+  const resource = new Location(mockAxios);
+
+  expect(resource.group()).toHaveProperty('filters', {
+    group_service: false,
+  });
+});
+
+it('can set the group service filter to true ', async () => {
+  const resource = new Location(mockAxios);
+
+  expect(resource.group(true)).toHaveProperty('filters', {
+    group_service: true,
+  });
+});
+
+
 it('will set the limit given', async () => {
   const resource = new Location(mockAxios);
 

@@ -29,7 +29,7 @@ it('will set the group service filter to false by default', async () => {
   });
 });
 
-it('can set the group service resources filter to true', async () => {
+it('can set the group service filter to true', async () => {
   const resource = new TimeSlot(mockAxios);
 
   expect(resource.group(true)).toHaveProperty('filters', {

@@ -17,6 +17,7 @@ export interface LocatableLocationParameters {
 export interface LocationFilter {
   [key: string]: any;
   assigned?: boolean;
+  group_service?: boolean;
   invitable?: number;
   invite_only_resources?: boolean;
   preferred?: number;
@@ -33,6 +34,7 @@ export interface LocationParameters {
   city?: string;
   client_view_meeting_method?: number;
   country?: string;
+  group_service?: number;
   invite_only?: number;
   invite_only_resources?: number;
   preferred?: number;
@@ -50,6 +52,8 @@ export interface LocationResource extends Pageable, ConditionalResource {
   containing(user: number | string): this;
 
   details(identifier: string): Promise<any>;
+
+  group(isGroup: boolean): this;
 
   invitable(): this;
 
@@ -138,6 +142,12 @@ export default class Location extends Conditional implements LocationResource {
 
   public invitable(): this {
     this.filters.invitable = 1;
+
+    return this;
+  }
+
+  public group(isGroup: boolean = false): this {
+    this.filters.group_service = isGroup;
 
     return this;
   }
@@ -241,6 +251,10 @@ export default class Location extends Conditional implements LocationResource {
 
     if (typeof this.filters.country !== 'undefined') {
       params.country = this.filters.country;
+    }
+
+    if (typeof this.filters.group_service !== 'undefined') {
+      params.group_service = Number(this.filters.group_service);
     }
 
     if (typeof this.filters.invitable !== 'undefined') {
