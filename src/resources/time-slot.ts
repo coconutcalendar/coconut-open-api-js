@@ -186,7 +186,7 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
     return this;
   }
 
-  public group(isGroup: boolean = false): this {
+  public group(isGroup: boolean = true): this {
     this.filters.group_service = isGroup;
 
     return this;

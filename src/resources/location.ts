@@ -146,7 +146,7 @@ export default class Location extends Conditional implements LocationResource {
     return this;
   }
 
-  public group(isGroup: boolean = false): this {
+  public group(isGroup: boolean = true): this {
     this.filters.group_service = isGroup;
 
     return this;
