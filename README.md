@@ -959,7 +959,7 @@ Send the API request using the pre-set filters.
 
 Set a filter which will tell the API to return time slots that are not conflicting with events associated with the Google access token.
 
-- `group(isGroup: number)`
+- `group(isGroup: boolean)`
 
 Set a filter which will tell the API the service selected is a group service
 
