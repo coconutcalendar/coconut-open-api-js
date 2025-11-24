@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.12.25] - 2025-11-24
+
+- Add group service filter 
+[#62](https://github.com/coconutcalendar/coconut-open-api-js/pull/62)
+
 ## [0.12.24] - 2025-10-08
 
 - Adds support for recaptcha_token to queue-appointments. 
