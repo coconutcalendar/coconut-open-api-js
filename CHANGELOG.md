@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.12.26] - 2025-11-25
+
+- Upgrade axios from 0.21.2 to 0.30.2
+[#63](https://github.com/coconutcalendar/coconut-open-api-js/pull/63)
+
 ## [0.12.25] - 2025-11-24
 
 - Add group service filter 
