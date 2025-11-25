@@ -1,6 +1,6 @@
 import mockAxios from 'axios';
-
 import Client from './client';
+import { legacyParamsSerializer } from './helpers/axiosHelpers';
 
 it('will be constructed using passed in options', async () => {
   Client('admin');
@@ -11,6 +11,9 @@ it('will be constructed using passed in options', async () => {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
+    },
+    paramsSerializer: {
+      serialize: legacyParamsSerializer,
     },
   });
 });
@@ -24,6 +27,9 @@ it('will use the current origin if no domain is passed in', async () => {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
+    },
+    paramsSerializer: {
+      serialize: legacyParamsSerializer,
     },
   });
 });
