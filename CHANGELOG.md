@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.12.27] - 2025-12-17
+
+- Track Booker from Open Queue Appointments
+[#64](https://github.com/coconutcalendar/coconut-open-api-js/pull/64)
+
 ## [0.12.26] - 2025-11-25
 
 - Upgrade axios from 0.21.2 to 0.30.2
