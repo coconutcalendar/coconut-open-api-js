@@ -106,6 +106,14 @@ it('can set a client for the queue appointment', async () => {
   });
 });
 
+it('can set an identifier for who we are acting as when booking the appointment', async () => {
+  const resource = new QueueAppointment(mockAxios);
+
+  expect(resource.actingAs(10)).toHaveProperty('meta', {
+    booker: 10,
+  });
+});
+
 it('can book a queue appointment with the minimum required parameters', async () => {
   const resource = new QueueAppointment(mockAxios);
   const client = new Client();
@@ -157,6 +165,7 @@ it('can book a queue appointment with all available parameters', async () => {
     .speaks('fr');
 
   await resource
+    .actingAs(10)
     .at(1)
     .for(2)
     .method(1)
@@ -227,6 +236,9 @@ it('can book a queue appointment with all available parameters', async () => {
       },
       type: 'queue-appointments',
     },
+    meta: {
+      booker: 10,
+    }
   });
 });
 

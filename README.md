@@ -56,6 +56,10 @@ class Answers {
 
 ##### Methods
 
+- `actingAs(identifier: number)`
+
+Set a relationship which will tell the API to use the given staff identifier as the booker when creating an appointment.
+
 - `add(appointment: number)`
 
 Add the currently supplied attendees to the given appointment.
@@ -368,6 +372,10 @@ class Attendees {
 ### Queue Appointments
 
 ##### Methods
+
+- `actingAs(identifier: number)`
+
+Set a relationship which will tell the API to use the given staff identifier as the booker when creating a queue appointment.
 
 - `at(location: number)`
 
