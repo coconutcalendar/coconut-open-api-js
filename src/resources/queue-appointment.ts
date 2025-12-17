@@ -46,9 +46,14 @@ export interface QueueAppointmentParameters {
     };
     type: string;
   };
+  meta?: {
+    booker?: number;
+  };
 }
 
 export interface QueueAppointmentResource extends ConditionalResource {
+  actingAs(identifier: number): this;
+
   at(location: number): this;
 
   book(): Promise<any>;
@@ -111,6 +116,12 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
       },
     };
     this.utm = {};
+  }
+
+  public actingAs(identifier: number): this {
+    this.meta.booker = identifier;
+
+    return this;
   }
 
   public at(location: number): this {
@@ -242,6 +253,12 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
 
     if (this.filters.through) {
       params.data.attributes.booked_through = this.filters.through;
+    }
+
+    if (this.meta.booker) {
+      params.meta = {
+        booker: this.meta.booker,
+      };
     }
 
     return params;
