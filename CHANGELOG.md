@@ -2,6 +2,41 @@
 
 ## [Unreleased]
 
+## [0.12.26] - 2025-11-25
+
+- Upgrade axios from 0.21.2 to 0.30.2
+[#63](https://github.com/coconutcalendar/coconut-open-api-js/pull/63)
+
+## [0.12.25] - 2025-11-24
+
+- Add group service filter 
+[#62](https://github.com/coconutcalendar/coconut-open-api-js/pull/62)
+
+## [0.12.24] - 2025-10-08
+
+- Adds support for recaptcha_token to queue-appointments. 
+[#61](https://github.com/coconutcalendar/coconut-open-api-js/pull/61)
+
+## [0.12.23] - 2025-08-12
+
+- Adds a filter for remote staff only on the user API. 
+[#60](https://github.com/coconutcalendar/coconut-open-api-js/pull/60)
+
+## [0.12.22] - 2025-03-31
+
+- Adds missing attributes for lang on queue-appointment API. 
+[#59](https://github.com/coconutcalendar/coconut-open-api-js/pull/59)
+
+## [0.12.21] - 2025-03-31
+
+- Adds support for lang on queue-appointment API. 
+[#58](https://github.com/coconutcalendar/coconut-open-api-js/pull/58)
+
+## [0.12.20] - 2025-03-27
+
+- Adds missing TS types lobby availability filter on users API. 
+[#57](https://github.com/coconutcalendar/coconut-open-api-js/pull/57)
+
 ## [0.12.19] - 2025-03-27
 
 - Adds support for a filter for lobby availability on users API. 

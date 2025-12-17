@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { legacyParamsSerializer } from './helpers/axiosHelpers';
 
 const Client = (domain?: string): AxiosInstance => {
   return axios.create({
@@ -7,6 +8,9 @@ const Client = (domain?: string): AxiosInstance => {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
+    },
+    paramsSerializer: {
+      serialize: legacyParamsSerializer,
     },
   });
 };

@@ -7,6 +7,7 @@ export interface TimeSlotFilter {
   end?: string;
   exclusion?: number;
   google?: string;
+  group_service?: boolean;
   invite_only_resources?: boolean;
   location?: number;
   location_category?: number | string;
@@ -26,6 +27,7 @@ export interface TimeSlotParameters {
   end?: string;
   exclusion?: number;
   google?: string;
+  group_service?: number;
   invite_only_resources?: number;
   location_id?: number;
   location_category_id?: number | string;
@@ -53,6 +55,8 @@ export interface TimeSlotResource extends Resource, ConditionalResource {
   for(services: number | number[]): this;
 
   google(token: string): this;
+
+  group(isGroup: boolean): this;
 
   in(timezone: string): this;
 
@@ -133,6 +137,10 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
       params.google = this.filters.google;
     }
 
+      if (this.filters.group_service) {
+          params.group_service = Number(this.filters.group_service);
+      }
+
     if (this.filters.invite_only_resources) {
       params.invite_only_resources = Number(this.filters.invite_only_resources);
     }
@@ -174,6 +182,12 @@ export default class TimeSlot extends Conditional implements TimeSlotResource {
 
   public google(token: string): this {
     this.filters.google = token;
+
+    return this;
+  }
+
+  public group(isGroup: boolean = true): this {
+    this.filters.group_service = isGroup;
 
     return this;
   }
