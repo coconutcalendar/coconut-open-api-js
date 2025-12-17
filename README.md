@@ -116,6 +116,10 @@ Set an attribute which will tell the API to use the given string as the medium U
 
 Set a filter to determine who should be notified when booking an appointment.
 
+- `recaptcha(recaptcha_token: string)`
+
+Set an attribute which will be used to validate a Google Enterprise ReCaptcha check (if applicable).
+
 - `reschedule(appointment: number, code: string)`
 
 Reschedule an appointment matching the given appointment identifier using the pre-set start parameter.
@@ -391,6 +395,10 @@ Set a filter which will tell the API to use the given meeting method when creati
 
 - `medium(medium: string)`
 
+Set an attribute which will tell the API the language of the walkin.
+
+- `language(locale: string)`
+
 Set an attribute which will tell the API to prefer a specific staff language.
 
 - `preferredLanguage(locale: string)`
@@ -400,6 +408,10 @@ Set an attribute which will tell the API to prefer a specific staff id.
 - `preferredStaff(id: string)`
 
 Set an attribute which will tell the API to use the given string as the medium UTM parameter when creating a queue appointment.
+
+- `recaptcha(recaptcha_token: string)`
+
+Set an attribute which will be used to validate a Google Enterprise ReCaptcha check (if applicable).
 
 - `source(source: string)`
 
@@ -582,6 +594,10 @@ Retrieve a given location's details based on the given identifier.
 - `get()`
 
 Send the API request using the pre-set filters.
+
+- `group()`
+
+Set a filter which will tell the API to return only group type services.
 
 - `invitable()`
 
@@ -943,6 +959,10 @@ Send the API request using the pre-set filters.
 
 Set a filter which will tell the API to return time slots that are not conflicting with events associated with the Google access token.
 
+- `group(isGroup: boolean)`
+
+Set a filter which will tell the API the service selected is a group service
+
 - `in(timezone: string)`
 
 Set a filter which will tell the API to return time slots in the given timezone.
@@ -1061,6 +1081,10 @@ Set a filter which will tell the API to return users that are specifically for u
 - `availableInLobby(lobbyLocationId: number | string)`
 
 Set a filter which will tell the API to return users that have a `lobby_location_id` matching the provided identifier.
+
+- `withoutRemoteStaffOnly(withoutRemoteStaffOnly?: boolean)`
+
+Set a filter which will tell the API to return users are not marked as remote only at a location. This filter will only works properly when used in conjunction with the `at` filter above;
 
 ##### Example
 

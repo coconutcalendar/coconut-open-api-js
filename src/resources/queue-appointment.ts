@@ -10,8 +10,10 @@ export interface QueueAppointmentFilter {
   through?: number;
   notes?: string;
   workflow?: number;
+  lang?: string;
   preferred_lang?: string;
   preferred_staff_id?: number;
+  recaptcha_token?: string;
 }
 
 export interface UtmParameters {
@@ -27,6 +29,7 @@ export interface QueueAppointmentParameters {
     attributes: {
       preferred_lang?: string;
       preferred_staff_id?: number;
+      lang?: string;
       booked_through?: number;
       service_id?: number;
       location_id?: number;
@@ -38,6 +41,7 @@ export interface QueueAppointmentParameters {
       source?: string;
       medium?: string;
       term?: string;
+      recaptcha_token?: string;
     };
     relationships: {
       client: {
@@ -70,9 +74,13 @@ export interface QueueAppointmentResource extends ConditionalResource {
 
   preferredLanguage(locale: string): this;
 
+  language(locale: string): this;
+
   with(client: ClientModel): this;
 
   workflow(workflow: number): this;
+
+  recaptcha(recaptchaToken: string): this;
 }
 
 export interface Utm {
@@ -166,6 +174,18 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     return this;
   }
 
+  public recaptcha(recaptchaToken: string): this {
+    this.filters.recaptcha_token = recaptchaToken;
+
+    return this;
+  }
+
+  public language(locale: string): this {
+    this.filters.lang = locale;
+
+    return this;
+  }
+
   public preferredLanguage(locale: string): this {
     this.filters.preferred_lang = locale;
 
@@ -229,6 +249,7 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
           service_id: this.filters.service,
           ...(this.filters.preferred_staff_id && { preferred_staff_id: this.filters.preferred_staff_id }),
           ...(this.filters.preferred_lang && { preferred_lang: this.filters.preferred_lang }),
+          ...(this.filters.lang && { lang: this.filters.lang }),
           ...(this.filters.workflow && { workflow_id: this.filters.workflow }),
           ...(this.filters.notes && { notes: this.filters.notes }),
           ...(this.filters.through && { booked_through: this.filters.through }),
@@ -255,6 +276,10 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
       params.data.attributes.booked_through = this.filters.through;
     }
 
+    if (this.filters.recaptcha_token) {
+      params.data.attributes.recaptcha_token = this.filters.recaptcha_token;
+    }
+    
     if (this.meta.booker) {
       params.meta = {
         booker: this.meta.booker,
