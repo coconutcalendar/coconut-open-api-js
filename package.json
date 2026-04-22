@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@types/uuid": "^3.4.5",
-    "axios": "~0.30.3",
+    "axios": "~0.31.1",
     "uuid": "^3.3.3"
   }
 }
