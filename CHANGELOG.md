@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.12.31] - 2026-08-26
+
+- Update axios to version 0.33.0
+- Update uuid to version 11.1.1
+  [#68](https://github.com/coconutcalendar/coconut-open-api-js/pull/68)
+
 ## [0.12.30] - 2026-06-22
 
 - Update axios to version 0.32.0
