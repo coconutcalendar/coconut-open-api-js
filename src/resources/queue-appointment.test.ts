@@ -100,9 +100,17 @@ it('can set a client for the queue appointment', async () => {
   const client = new Client();
 
   expect(resource.with(client)).toHaveProperty('relationships', {
-    client: {
-      data: client,
-    },
+    attendees: [client],
+  });
+});
+
+it('can set several clients for the queue appointment', async () => {
+  const resource = new QueueAppointment(mockAxios);
+  const first = new Client();
+  const second = new Client();
+
+  expect(resource.with([first, second])).toHaveProperty('relationships', {
+    attendees: [first, second],
   });
 });
 
@@ -148,6 +156,112 @@ it('can book a queue appointment with the minimum required parameters', async ()
       type: 'queue-appointments',
     },
   });
+});
+
+it('sends several clients together as attendees when booking a queue appointment', async () => {
+  const resource = new QueueAppointment(mockAxios);
+  const first = new Client().named('Jane', 'Doe');
+  const second = new Client().named('John', 'Doe').answers(new Answer().for(1).is('an answer for the second attendee'));
+
+  await resource
+    .at(1)
+    .for(2)
+    .method(1)
+    .with([first, second])
+    .book();
+
+  expect(mockAxios.post).toHaveBeenCalledTimes(1);
+  expect(mockAxios.post).toHaveBeenCalledWith('queue-appointments', {
+    data: {
+      attributes: {
+        location_id: 1,
+        service_id: 2,
+        meeting_method: 1,
+      },
+      relationships: {
+        attendees: {
+          data: [
+            {
+              attributes: {
+                first_name: 'Jane',
+                last_name: 'Doe',
+                receive_sms: false,
+              },
+              type: 'client',
+            },
+            {
+              attributes: {
+                first_name: 'John',
+                last_name: 'Doe',
+                receive_sms: false,
+              },
+              relationships: {
+                answers: {
+                  data: [
+                    {
+                      attributes: {
+                        question_id: 1,
+                        value: 'an answer for the second attendee',
+                      },
+                      type: 'answers',
+                    },
+                  ],
+                },
+              },
+              type: 'client',
+            },
+          ],
+        },
+        client: {
+          data: {
+            attributes: {
+              first_name: 'Jane',
+              last_name: 'Doe',
+              receive_sms: false,
+            },
+            type: 'client',
+          },
+        },
+      },
+      type: 'queue-appointments',
+    },
+  });
+});
+
+it('always sends the client relationship, naming the first attendee', async () => {
+  const resource = new QueueAppointment(mockAxios);
+  const first = new Client().named('Jane', 'Doe');
+  const second = new Client().named('John', 'Doe');
+
+  await resource
+    .at(1)
+    .for(2)
+    .method(1)
+    .with([first, second])
+    .book();
+
+  const payload = (mockAxios.post as jest.Mock).mock.calls[0][1];
+
+  expect(payload.data.relationships.client.data.attributes.first_name).toEqual('Jane');
+  // The attendees list is authoritative and holds everyone, the first attendee included.
+  expect(payload.data.relationships.attendees.data).toHaveLength(2);
+});
+
+it('sends a single client through the client relationship rather than as attendees', async () => {
+  const resource = new QueueAppointment(mockAxios);
+  const client = new Client().named('Jane', 'Doe');
+
+  await resource
+    .at(1)
+    .for(2)
+    .method(1)
+    .with([client])
+    .book();
+
+  const payload = (mockAxios.post as jest.Mock).mock.calls[0][1];
+
+  expect(payload.data.relationships).toHaveProperty('client');
+  expect(payload.data.relationships).not.toHaveProperty('attendees');
 });
 
 it('can book a queue appointment with all available parameters', async () => {
@@ -238,7 +352,7 @@ it('can book a queue appointment with all available parameters', async () => {
     },
     meta: {
       booker: 10,
-    }
+    },
   });
 });
 
