@@ -433,9 +433,12 @@ Set a locale to use as a filter when not supplying a staff preference to ensure 
 
 Set an attribute which will tell the API to use the given origin constant as the booked through value when creating a queue appointment.
 
-- `with(client: ClientModel)`
+- `with(attendees: ClientModel | ClientModel[])`
 
-Set a relationship which will tell the API to use the given client model when creating a new queue appointment.
+Set a relationship which will tell the API to use the given client model(s) when creating a new queue appointment.
+The `client` relationship is always sent and names the first of them. When more than one is given an `attendees`
+relationship is sent alongside it holding everyone attending, the first included, each of which may carry its own
+answers.
 
 - `workflow(workflow: number)`
 

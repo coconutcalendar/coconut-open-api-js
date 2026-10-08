@@ -24,6 +24,16 @@ export interface UtmParameters {
   term?: string;
 }
 
+interface QueueAppointmentAttendeeParameter {
+  attributes?: object;
+  relationships?: {
+    answers: {
+      data: object[];
+    };
+  };
+  type: string;
+}
+
 export interface QueueAppointmentParameters {
   data: {
     attributes: {
@@ -44,8 +54,11 @@ export interface QueueAppointmentParameters {
       recaptcha_token?: string;
     };
     relationships: {
+      attendees?: {
+        data: QueueAppointmentAttendeeParameter[];
+      };
       client: {
-        data: object;
+        data: QueueAppointmentAttendeeParameter;
       };
     };
     type: string;
@@ -76,7 +89,7 @@ export interface QueueAppointmentResource extends ConditionalResource {
 
   language(locale: string): this;
 
-  with(client: ClientModel): this;
+  with(attendees: ClientModel | ClientModel[]): this;
 
   workflow(workflow: number): this;
 
@@ -96,9 +109,7 @@ export interface Utm {
 }
 
 export interface QueueAppointmentRelationship {
-  client: {
-    data: ClientModel | null;
-  };
+  attendees: ClientModel[] | [];
 }
 
 export interface QueueAppointmentMeta {
@@ -119,9 +130,7 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     this.filters = {};
     this.meta = {};
     this.relationships = {
-      client: {
-        data: null,
-      },
+      attendees: [],
     };
     this.utm = {};
   }
@@ -162,8 +171,8 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     return this;
   }
 
-  public with(client: ClientModel): this {
-    this.relationships.client.data = client;
+  public with(attendees: ClientModel | ClientModel[]): this {
+    this.relationships.attendees = Array.isArray(attendees) ? attendees : [attendees];
 
     return this;
   }
@@ -232,14 +241,36 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     return await this.client.post('queue-appointments', this.params());
   }
 
+  protected transformAttendees(): QueueAppointmentAttendeeParameter[] {
+    return (this.relationships.attendees as ClientModel[]).map(
+      (client: ClientModel): QueueAppointmentAttendeeParameter => {
+        return client.transform() as QueueAppointmentAttendeeParameter;
+      },
+    );
+  }
+
   protected hasUtm(): boolean {
     return !!this.utm.campaign || !!this.utm.content || !!this.utm.medium || !!this.utm.source || !!this.utm.term;
   }
 
   protected params(): QueueAppointmentParameters | object {
-    if (this.relationships.client.data === null) {
+    if (this.relationships.attendees.length === 0) {
       return {};
     }
+
+    const attendees = this.transformAttendees();
+
+    // attendees is authoritative and holds everyone, the first (aka primary) also stays in client.
+    const relationships = {
+      ...(attendees.length > 1 && {
+        attendees: {
+          data: attendees,
+        },
+      }),
+      client: {
+        data: attendees[0],
+      },
+    };
 
     const params: QueueAppointmentParameters = {
       data: {
@@ -259,11 +290,7 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
           ...(this.utm.source && { source: this.utm.source }),
           ...(this.utm.term && { term: this.utm.term }),
         },
-        relationships: {
-          client: {
-            data: this.relationships.client.data.transform(),
-          },
-        },
+        relationships,
         type: 'queue-appointments',
       },
     };
@@ -279,7 +306,7 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
     if (this.filters.recaptcha_token) {
       params.data.attributes.recaptcha_token = this.filters.recaptcha_token;
     }
-    
+
     if (this.meta.booker) {
       params.meta = {
         booker: this.meta.booker,
