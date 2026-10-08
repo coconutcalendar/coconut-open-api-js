@@ -260,6 +260,7 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
 
     const attendees = this.transformAttendees();
 
+    // attendees is authoritative and holds everyone, the first (aka primary) also stays in client.
     const relationships = {
       ...(attendees.length > 1 && {
         attendees: {
