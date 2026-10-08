@@ -260,11 +260,6 @@ export default class QueueAppointment extends Conditional implements QueueAppoin
 
     const attendees = this.transformAttendees();
 
-    // The client relationship is always sent and always names the first attendee, so a
-    // consumer that predates multi attendee walk-ins still reads a usable walk-in out
-    // of the payload. When there is more than one person the attendees relationship is
-    // sent alongside it and is the authoritative list: it holds everyone attending,
-    // the first attendee included, the same way the appointment resource does.
     const relationships = {
       ...(attendees.length > 1 && {
         attendees: {
