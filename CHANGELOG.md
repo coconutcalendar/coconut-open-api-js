@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.12.33] - 2026-10-26
+
+- Update axios to version 0.34.0
+  [#70](https://github.com/coconutcalendar/coconut-open-api-js/pull/70)
+
 ## [0.12.32] - 2026-08-26
 
 - Add multi attendee support to queue appointments
