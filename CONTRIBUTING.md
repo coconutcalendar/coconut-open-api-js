@@ -28,4 +28,23 @@ $ yarn run test
 ```
 
 
+## Releasing
+
+Releases are cut from `master` with the **Release** workflow under the GitHub *Actions* tab (`Run workflow`):
+
+- **description** - what was released. It becomes the `Release <description>` commit message and the `CHANGELOG.md` entry.
+- **bump** - which semver part to bump (`patch` by default, see [SemVer](http://semver.org/)).
+- **version** - an exact version to use instead of bumping, when you need control over the number.
+- **pull_request** - the pull request number to link from the changelog entry.
+- **create_release** - also create the `vX.Y.Z` tag and GitHub release (on by default).
+
+The workflow runs the lint and tests, commits the version bump and changelog entry to `master`, and tags it. Publishing to npm is still done by hand afterwards from an up to date `master`:
+
+``` bash
+$ git pull origin master
+$ npm publish
+```
+
+If pushes to `master` are protected, add a `RELEASE_TOKEN` repository secret holding a personal access token with write access; the workflow falls back to the default `GITHUB_TOKEN` otherwise.
+
 **Happy coding**!
