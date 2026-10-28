@@ -31,10 +31,6 @@ on:
         description: 'Exact version to release instead of bumping (e.g. 0.12.34).'
         required: false
         type: string
-      pull_request:
-        description: 'Pull request number to link from the changelog entry (e.g. 71).'
-        required: false
-        type: string
       create_release:
         description: 'Also create the vX.Y.Z tag and GitHub release on master.'
         required: true
@@ -59,6 +55,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: master
+          # Full history so the changelog can link the pull requests merged
+          # since the previous release commit.
+          fetch-depth: 0
           # A personal access token (RELEASE_TOKEN) is only needed when master
           # is protected against pushes from the default GITHUB_TOKEN.
           token: ${{ secrets.RELEASE_TOKEN || github.token }}
@@ -91,13 +90,11 @@ jobs:
           BUMP: ${{ inputs.bump }}
           VERSION: ${{ inputs.version }}
           DESCRIPTION: ${{ inputs.description }}
-          PULL_REQUEST: ${{ inputs.pull_request }}
         run: |
           version=$(node scripts/prepare-release.js \
             --bump "$BUMP" \
             --version "$VERSION" \
-            --description "$DESCRIPTION" \
-            --pull-request "$PULL_REQUEST")
+            --description "$DESCRIPTION")
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "Releasing $version"
           git --no-pager diff

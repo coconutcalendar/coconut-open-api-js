@@ -35,10 +35,9 @@ Releases are cut from `master` with the **Release** workflow under the GitHub *A
 - **description** - what was released. It becomes the `Release <description>` commit message and the `CHANGELOG.md` entry.
 - **bump** - which semver part to bump (`patch` by default, see [SemVer](http://semver.org/)).
 - **version** - an exact version to use instead of bumping, when you need control over the number.
-- **pull_request** - the pull request number to link from the changelog entry.
 - **create_release** - also create the `vX.Y.Z` tag and GitHub release (on by default).
 
-The workflow runs the lint and tests, commits the version bump and changelog entry to `master`, publishes the package to npm, and tags it. Nothing is left to do by hand; confirm the new version on [npm](https://www.npmjs.com/package/coconut-open-api-js) when it finishes.
+The changelog entry links every pull request squash-merged since the previous release commit (taken from the `(#123)` suffix of the commit subjects). The workflow runs the lint and tests, commits the version bump and changelog entry to `master`, publishes the package to npm, and tags it. Nothing is left to do by hand; confirm the new version on [npm](https://www.npmjs.com/package/coconut-open-api-js) when it finishes.
 
 Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers), so no npm token is stored in the repository and every published version carries a provenance attestation. A package maintainer configures it once on the package's *Settings* page at npmjs.com, under *Trusted Publisher*, choosing GitHub Actions with:
 

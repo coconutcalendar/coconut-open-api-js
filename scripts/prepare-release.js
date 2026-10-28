@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 /*
  * Prepares a release commit: bumps the version in package.json and adds the
- * matching entry to CHANGELOG.md. Prints the new version on stdout.
+ * matching entry to CHANGELOG.md, linking the pull requests squash-merged
+ * since the previous release commit. Prints the new version on stdout.
  *
  *   node scripts/prepare-release.js --bump patch --description "Add foo"
- *   node scripts/prepare-release.js --version 1.2.3 --description "Add foo" --pull-request 71
+ *   node scripts/prepare-release.js --version 1.2.3 --description "Add foo"
  */
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -68,13 +70,41 @@ const resolveVersion = (current, options) => {
   return bumpVersion(current, options.bump || 'patch');
 };
 
-const changelogEntry = (version, description, pullRequest) => {
+/*
+ * Pull request numbers from the squash-merge subjects ("Something (#71)")
+ * between HEAD and the previous "Release ..." commit, oldest first.
+ */
+const extractPullRequests = (subjects) => {
+  const pullRequests = [];
+
+  for (const subject of subjects) {
+    if (/^Release\b/.test(subject)) {
+      break;
+    }
+
+    const match = subject.match(/\(#(\d+)\)\s*$/);
+
+    if (match) {
+      pullRequests.unshift(match[1]);
+    }
+  }
+
+  return pullRequests;
+};
+
+const pullRequestsSinceLastRelease = (root) => {
+  const log = execFileSync('git', ['log', '--format=%s', 'HEAD'], { cwd: root, encoding: 'utf8' });
+
+  return extractPullRequests(log.split('\n'));
+};
+
+const changelogEntry = (version, description, pullRequests) => {
   const date = new Date().toISOString().slice(0, 10);
   const lines = [`## [${version}] - ${date}`, '', `- ${description}`];
 
-  if (pullRequest) {
+  pullRequests.forEach((pullRequest) => {
     lines.push(`  [#${pullRequest}](${REPOSITORY_URL}/pull/${pullRequest})`);
-  }
+  });
 
   return `${lines.join('\n')}\n\n`;
 };
@@ -105,22 +135,26 @@ const main = () => {
     throw new Error(`CHANGELOG.md already has an entry for ${version}`);
   }
 
-  const pullRequest = (options['pull-request'] || '').trim().replace(/^#/, '');
+  const pullRequests = pullRequestsSinceLastRelease(root);
 
   packageJson.version = version;
 
   fs.writeFileSync(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`);
   fs.writeFileSync(
     changelogPath,
-    changelog.replace(marker, `${marker}${changelogEntry(version, description, pullRequest)}`),
+    changelog.replace(marker, `${marker}${changelogEntry(version, description, pullRequests)}`),
   );
 
   process.stdout.write(`${version}\n`);
 };
 
-try {
-  main();
-} catch (error) {
-  process.stderr.write(`${error.message}\n`);
-  process.exit(1);
+module.exports = { bumpVersion, changelogEntry, extractPullRequests, resolveVersion };
+
+if (require.main === module) {
+  try {
+    main();
+  } catch (error) {
+    process.stderr.write(`${error.message}\n`);
+    process.exit(1);
+  }
 }
