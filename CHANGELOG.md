@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.12.34] - 2026-10-28
+
+- Add crm external data support to appointments
+  [#71](https://github.com/coconutcalendar/coconut-open-api-js/pull/71)
+  [#72](https://github.com/coconutcalendar/coconut-open-api-js/pull/72)
+
 ## [0.12.33] - 2026-10-26
 
 - Update axios to version 0.34.0
