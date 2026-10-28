@@ -1,0 +1,126 @@
+name: Release
+
+# Creates the "Release ..." commit on master (package.json version bump +
+# CHANGELOG.md entry), publishes the package to npm, and optionally creates
+# the matching vX.Y.Z tag and GitHub release.
+#
+# Publishing uses npm trusted publishing (OIDC): no npm token is stored.
+# This workflow file (release.yml) must be registered as a trusted publisher
+# on the package's settings page at npmjs.com, with "npm publish" allowed.
+# Provenance attestations are generated automatically.
+#
+# Secrets: RELEASE_TOKEN (personal access token) only when master is
+# protected against pushes from the default GITHUB_TOKEN.
+on:
+  workflow_dispatch:
+    inputs:
+      description:
+        description: 'What was released. Used as "Release <description>" and as the changelog entry.'
+        required: true
+        type: string
+      bump:
+        description: 'Semver part to bump. Ignored when an exact version is given.'
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      version:
+        description: 'Exact version to release instead of bumping (e.g. 0.12.34).'
+        required: false
+        type: string
+      create_release:
+        description: 'Also create the vX.Y.Z tag and GitHub release on master.'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  id-token: write # OIDC token for npm trusted publishing
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release commit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          # Full history so the changelog can link the pull requests merged
+          # since the previous release commit.
+          fetch-depth: 0
+          # A personal access token (RELEASE_TOKEN) is only needed when master
+          # is protected against pushes from the default GITHUB_TOKEN.
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm 11.5.1 or later.
+      - name: Update npm
+        run: |
+          npm install -g npm@latest
+          npm --version
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Bump version and changelog
+        id: prepare
+        env:
+          BUMP: ${{ inputs.bump }}
+          VERSION: ${{ inputs.version }}
+          DESCRIPTION: ${{ inputs.description }}
+        run: |
+          version=$(node scripts/prepare-release.js \
+            --bump "$BUMP" \
+            --version "$VERSION" \
+            --description "$DESCRIPTION")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Releasing $version"
+          git --no-pager diff
+
+      - name: Commit and push to master
+        env:
+          DESCRIPTION: ${{ inputs.description }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json CHANGELOG.md
+          git commit -m "Release $DESCRIPTION"
+          git push origin HEAD:master
+
+      - name: Publish to npm
+        run: npm publish
+
+      - name: Create tag and GitHub release
+        if: ${{ inputs.create_release }}
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+          VERSION: ${{ steps.prepare.outputs.version }}
+          DESCRIPTION: ${{ inputs.description }}
+        run: |
+          gh release create "v$VERSION" \
+            --target master \
+            --title "v$VERSION" \
+            --notes "Release $DESCRIPTION" \
+            --latest

@@ -28,4 +28,8 @@ $ yarn run test
 ```
 
 
+## Releasing
+
+Releases are handled by the maintainers. Once your pull request is merged, it will be included in the next release and published to npm; there is nothing else you need to do. If you need a release sooner, say so in your pull request.
+
 **Happy coding**!
