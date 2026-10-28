@@ -92,6 +92,10 @@ Set an attribute which will tell the API to use the given string as the campaign
 
 Set an attribute which will tell the API to use the given string as the content UTM parameter when creating an appointment.
 
+- `crmExternalData(data: string)`
+
+Set an attribute which will be stored against the vendor's CRM integration when creating an appointment.
+
 - `for(services: number | numbers[])`
 
 Set a relationship which will tell the API to use the given service identifier when creating an appointment.
