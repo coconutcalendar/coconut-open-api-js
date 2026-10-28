@@ -200,6 +200,14 @@ it('can set a booking shortcut property', async () => {
   });
 });
 
+it('can set the crm external data property', async () => {
+  const resource = new Appointment(mockAxios);
+
+  expect(resource.crmExternalData('{"k":"v"}')).toHaveProperty('filters', {
+    crm_external_data: '{"k":"v"}',
+  });
+});
+
 it('can set a single attendee for the appointment', async () => {
   const resource = new Appointment(mockAxios);
   const attendee = new Attendee();
@@ -312,6 +320,7 @@ it('can book an appointment with all available parameters', async () => {
       .term('test term')
       .actingAs(10)
       .recaptcha('foo')
+      .crmExternalData('{"k":"v"}')
       .withInviteOnly()
       .withinUserCategory(1)
       .withoutMeetingLink()
@@ -347,6 +356,7 @@ it('can book an appointment with all available parameters', async () => {
           additional_staff_id: [1, 2],
           booked_through: Origins.MODERN_CLIENT_VIEW,
           booking_shortcut_id: 6,
+          crm_external_data: '{"k":"v"}',
           invitation_id: 5,
           invite_only_resources: 1,
           location_id: 1,

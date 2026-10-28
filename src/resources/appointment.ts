@@ -5,6 +5,7 @@ import { AttendeeModel } from '../models/attendee';
 import Conditional, { ConditionalResource } from './conditional';
 
 export interface AppointmentFilter {
+  crm_external_data?: string;
   invitation?: number;
   invite_only_resources?: boolean;
   locale?: string | null;
@@ -49,6 +50,7 @@ export interface AppointmentParameters {
       additional_staff_id?: number | number[];
       booked_through?: number;
       booking_shortcut_id?: number;
+      crm_external_data?: string;
       invitation_id: number | null;
       invite_only_resources?: number;
       location_id: number | undefined;
@@ -139,6 +141,8 @@ export interface AppointmentResource extends Resource, ConditionalResource {
   by(user: number): this;
 
   cancel(appointment: number, attendee: number, code: string): Promise<any>;
+
+  crmExternalData(data: string): this;
 
   for(services: number | number[]): this;
 
@@ -305,6 +309,12 @@ export default class Appointment extends Conditional implements AppointmentResou
 
   public content(content: string): this {
     this.utm.content = content;
+
+    return this;
+  }
+
+  public crmExternalData(data: string): this {
+    this.filters.crm_external_data = data;
 
     return this;
   }
@@ -539,6 +549,10 @@ export default class Appointment extends Conditional implements AppointmentResou
 
       if (this.filters.workflow) {
         params.data.attributes.workflow_id = this.filters.workflow;
+      }
+
+      if (this.filters.crm_external_data) {
+        params.data.attributes.crm_external_data = this.filters.crm_external_data;
       }
     }
 
