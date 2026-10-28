@@ -30,25 +30,6 @@ $ yarn run test
 
 ## Releasing
 
-Releases are cut from `master` with the **Release** workflow under the GitHub *Actions* tab (`Run workflow`):
-
-- **description** - what was released. It becomes the `Release <description>` commit message and the `CHANGELOG.md` entry.
-- **bump** - which semver part to bump (`patch` by default, see [SemVer](http://semver.org/)).
-- **version** - an exact version to use instead of bumping, when you need control over the number.
-- **create_release** - also create the `vX.Y.Z` tag and GitHub release (on by default).
-
-The changelog entry links every pull request squash-merged since the previous release commit (taken from the `(#123)` suffix of the commit subjects). The workflow runs the lint and tests, commits the version bump and changelog entry to `master`, publishes the package to npm, and tags it. Nothing is left to do by hand; confirm the new version on [npm](https://www.npmjs.com/package/coconut-open-api-js) when it finishes.
-
-Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers), so no npm token is stored in the repository and every published version carries a provenance attestation. A package maintainer configures it once on the package's *Settings* page at npmjs.com, under *Trusted Publisher*, choosing GitHub Actions with:
-
-- **Organization or user**: `coconutcalendar`
-- **Repository**: `coconut-open-api-js`
-- **Workflow filename**: `release.yml`
-- **Environment name**: leave empty
-- **Allowed actions**: allow `npm publish`
-
-The first release must run within two days of saving that configuration, or it expires and has to be recreated. Once it works, the package can be set to "Require two-factor authentication and disallow tokens" so trusted publishing is the only way to publish.
-
-The only secret the workflow may need is `RELEASE_TOKEN`, a personal access token with write access, if pushes to `master` are protected against the default `GITHUB_TOKEN`.
+Releases are handled by the maintainers. Once your pull request is merged, it will be included in the next release and published to npm; there is nothing else you need to do. If you need a release sooner, say so in your pull request.
 
 **Happy coding**!
