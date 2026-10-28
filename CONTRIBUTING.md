@@ -38,13 +38,11 @@ Releases are cut from `master` with the **Release** workflow under the GitHub *A
 - **pull_request** - the pull request number to link from the changelog entry.
 - **create_release** - also create the `vX.Y.Z` tag and GitHub release (on by default).
 
-The workflow runs the lint and tests, commits the version bump and changelog entry to `master`, and tags it. Publishing to npm is still done by hand afterwards from an up to date `master`:
+The workflow runs the lint and tests, commits the version bump and changelog entry to `master`, publishes the package to npm, and tags it. Nothing is left to do by hand; confirm the new version on [npm](https://www.npmjs.com/package/coconut-open-api-js) when it finishes.
 
-``` bash
-$ git pull origin master
-$ npm publish
-```
+It relies on two repository secrets:
 
-If pushes to `master` are protected, add a `RELEASE_TOKEN` repository secret holding a personal access token with write access; the workflow falls back to the default `GITHUB_TOKEN` otherwise.
+- `NPM_TOKEN` - an npm automation token with publish rights on the package (required).
+- `RELEASE_TOKEN` - a personal access token with write access, only needed if pushes to `master` are protected against the default `GITHUB_TOKEN`.
 
 **Happy coding**!
