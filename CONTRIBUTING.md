@@ -40,9 +40,16 @@ Releases are cut from `master` with the **Release** workflow under the GitHub *A
 
 The workflow runs the lint and tests, commits the version bump and changelog entry to `master`, publishes the package to npm, and tags it. Nothing is left to do by hand; confirm the new version on [npm](https://www.npmjs.com/package/coconut-open-api-js) when it finishes.
 
-It relies on two repository secrets:
+Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers), so no npm token is stored in the repository and every published version carries a provenance attestation. A package maintainer configures it once on the package's *Settings* page at npmjs.com, under *Trusted Publisher*, choosing GitHub Actions with:
 
-- `NPM_TOKEN` - an npm automation token with publish rights on the package (required).
-- `RELEASE_TOKEN` - a personal access token with write access, only needed if pushes to `master` are protected against the default `GITHUB_TOKEN`.
+- **Organization or user**: `coconutcalendar`
+- **Repository**: `coconut-open-api-js`
+- **Workflow filename**: `release.yml`
+- **Environment name**: leave empty
+- **Allowed actions**: allow `npm publish`
+
+The first release must run within two days of saving that configuration, or it expires and has to be recreated. Once it works, the package can be set to "Require two-factor authentication and disallow tokens" so trusted publishing is the only way to publish.
+
+The only secret the workflow may need is `RELEASE_TOKEN`, a personal access token with write access, if pushes to `master` are protected against the default `GITHUB_TOKEN`.
 
 **Happy coding**!
